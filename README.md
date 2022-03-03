@@ -21,13 +21,19 @@ The server portion is implemented in Python. You can use any programming languag
 
 ### Architecture
 
-Both containers run on the same _Docker custom network_. This workshop is not about _Docker custom network_ but I encourage you to run your containers in custom network to get the benefice of a DNS. The following command was used to create the `frontend` network.
+Both containers run on the same _Docker custom network_. This workshop is not about _Docker custom network_ but I encourage you to run your containers in custom network to get the added value of a DNS server. The following command was used to create the `frontend` network.
 
 ```command
 docker network create --driver=bridge --subnet=172.31.10.0/24 --ip-range=172.31.10.128/25 --gateway=172.31.10.1 frontend
 ```
 
-The Docker containers expose `TCP/8080` and `TCP/8443`, for the web server, and `TCP/10080` and `TCP/10443`, for the WebSocket server. These ports are exposed outside the Docker host.
+The Docker containers expose the following TCP ports:
+- Web Server **HTTP://** `TCP/8080`
+- Web Server **HTTPS://** `TCP/8443`
+- WebSocket **Server WS://** `TCP/9080`
+- WebSocket **Server WSS://** `TCP/9443`
+
+These ports are exposed outside the Docker host.
 
 ![WebSocket Architecture](images/architecture.jpg "Architecture")
 
