@@ -100,23 +100,23 @@ The file `websocket.pem` is your self-signed certificate. It needs to be marked 
 
 1. In the case of macOS, open the file `server/websocket.pem` in KeyChain.
 
-![untrusted new certificate](images/keychain1.jpg)
+![untrusted new certificate](images/keychain1.png)
 
-2. Double clink on it and expand the **Trust**
+2. Double clink on it and expand the **Trust**.
 
 3. Select `Always Trust` in the **When using this certificate:**. The only one that needs to be `Always Trust` is the **Secure Sockets Layer (SSL)**.
 
-![always trust](images/keychain2.jpg)
+![always trust](images/keychain2.png)
 
-4. Every elements are `Always Trust`
+4. The element **Secure Sockets Layer (SSL)** is `Always Trust`.
 
-![always trust](images/keychain3.jpg)
+![always trust](images/keychain3.png)
 
 5. Close this windows by pressing the **Close button** on the top left corner. You will be asked for you credential.
 
 6. The certificate status should be `This certificate is marked as trusted for this account`.
 
-![always trust](images/keychain4.jpg)
+![always trust](images/keychain4.png)
 
 ### TEST THE CERTIFICATE
 
