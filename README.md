@@ -33,7 +33,7 @@ The Docker containers expose the following TCP ports:
 - WebSocket Server **ws://** on `TCP/9080`.
 - WebSocket Server **wss://** on `TCP/9443`.
 
-These ports are exposed outside the Docker host.
+The ports are exposed outside the Docker host.
 
 ![WebSocket Architecture](images/architecture.jpg "Architecture")
 
