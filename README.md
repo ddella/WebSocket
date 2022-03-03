@@ -48,7 +48,7 @@ The web page lets you enter the following information:
 - The IP address of the WebSocket server.
 - The TCP port the server listens on.
 
-I made a workshop on building a simple web server with Nginx and PHP8. Take a look [here](https://github.com/ddella/PHP8-Nginx). The container is only 31Mb. This is the command to start the container in a custom network `frontend`. This network in a custom Docker network with the subnet `172.31.10.0/24`.
+I made a workshop on building a simple web server with Nginx and PHP8. Take a look [here](https://github.com/ddella/PHP8-Nginx). The container is only 31Mb. This is the command to start the container in a custom network `frontend`. The subnet is `172.31.10.0/24`.
 
 ```command
 docker run --rm -d -p 8080:80 -p 8443:443 --name webserver --hostname webserver --domainname example.com --ip 172.31.10.10 --env TZ='EAST+5EDT,M3.2.0/2,M11.1.0/2' --env TIMEZONE='America/New_York' --network frontend  -v $PWD/www/:/www -v $PWD/logs/:/var/log/nginx php8_nginx
@@ -56,18 +56,17 @@ docker run --rm -d -p 8080:80 -p 8443:443 --name webserver --hostname webserver 
 
 The web server directory, inside the container, is mounted on your local drive in `$PWD/www/`. You will be able to change the HTML/CSS/JavaScript file without needing to restart the web server. I also mounted a local directory for the logs, in case you need to troubleshoot 😉.
 
-If everything worked as expected, you should have a web server in a Docker container that you can reach with your favorite browser.
+If everything worked as expected, you should have a web server in a Docker container that you can reach with your favourite browser with the url `http://localhost:8080`.
 
 ![Web server main web page](images/webpage.jpg "Main Web Page")
 
 ## Step 3 — WebSocket Server
 
-The WebSocket server runs on Python. I built a Python Docker container based on Alpine Linux 3.15. The image is only 55.6MB. When building the image, only one package is required, `websockets` version 10.2.
+The WebSocket server runs on Python. I built a Python Docker container based on Alpine Linux 3.15. The image is only 55.6MB. When building the image, only the package `websockets` version 10.2 is required.
 
-This is the `requirements.txt` file needed to get all the packages (we need only one) when building the Python container. If you want more Python packages, just add them on a separate line.
+I still like to have a `requirements.txt` file to get the package(s) when building a Python container. If you want more Python packages, just add them on a separate line.
 
 ```txt
-[label requirements.txt]
 websockets==10.2
 ```
 
