@@ -6,7 +6,8 @@
 This is an example of a client/server WebSocket. The client and server are build on different Docker containers:
 
 - Web Server on Nginx
-- WebSocket server in Python
+- Secure WebSocket Server in Python
+- Non-Secure WebSocket Server in Python
 
 The WebSocket Protocol enables bi-directional, full duplex communications protocol between a client and a server. It provides a persistent connection between the client and the server and both parties can sending data at any time. It is commonly used in modern web applications for streaming data and other asynchronous traffic. The goal of this technology is to provide a mechanism for browser-based applications that need two-way communication with servers without the need to open multiple HTTP connections.
 
@@ -68,7 +69,7 @@ The web server directory, inside the container, is mounted on your local drive i
 
 If everything works as expected, you should have a web server in a Docker container that you can reach with your favourite browser with the url `http://localhost:8080`.
 
-![Web server main web page](images/webpage.jpg "Main Web Page")
+![Web server main web page](images/not-connected "Main Web Page")
 
 ## Step 3 — WebSocket Server
 
@@ -198,11 +199,11 @@ docker run -it --rm --name ws --hostname ws --domainname example.com --ip 172.31
 
 Start your browser, type this url `localhost:8080`, fill the information and press `connect`. Type a message in the `input message box` and hit the button `Send Message`, if Successful, the server will send the message back in the box below. If the connect button is greyed out, it worked !
 
-![Successful connection](images/connect.jpg "Success")
+![Successful connection](images/connected.jpg "Success")
 
 ## Clean up
 
-When you're done, it's always a good idea to clean everything. If you followed all the steps, you should have three Docker containers running.
+When you're done, it's always a good idea to clean everything. If you followed all the steps, you should have three Docker containers running. For the WebSocket servers, just press `CTRL-C` and they should terminate. The only one left is the Web Server. Following is the command to terminate it.
 
 ```command
 docker rm -f webserver

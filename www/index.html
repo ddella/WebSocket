@@ -16,11 +16,33 @@
           #btnConnect    { width: 100px; }
           #btnDisconnect { width: 100px; }
           #btnSend       { width: 100px; }
+
+          .open {
+             border: 5px;
+             border-style: solid;
+             border-color: green;
+            text-align: center;
+            width: 513px;
+            font-family: 'Consolas';
+          }
+          .closed {
+            /* border: 5px outset red; */
+            border: 5px;
+            border-style: solid;
+            border-color: red;
+            text-align: center;
+            width: 513px;
+            font-family: 'Consolas';
+          }
+          .bold {
+              font-weight: bolder;
+          }
       </style>
    </head>
     <body>
         <h1>WebSocket Client</h1>
         <!-- WebSocket Connection Parameters Table -->
+        <div class="closed" id="status">Not connected</div><br>
         <table>
             <tr>
                 <td width="200px">WS Protocol</td>
