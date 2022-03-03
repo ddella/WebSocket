@@ -88,7 +88,7 @@ I used this simple command to generate a self-signed certificate for the secure 
 
 ```command
 cd server
-openssl req -new -x509 -newkey rsa:4096 -keyout websocket.pem -out websocket.pem -sha256 -days 3650 -config ../ssl/websocket.cnf -extensions v3_ca -nodes
+openssl req -new -x509 -newkey rsa:4096 -keyout websocket.pem -out websocket.pem -sha256 -days 3650 -config ssl/websocket.cnf -extensions v3_ca -nodes
 cd ..
 ```
 
