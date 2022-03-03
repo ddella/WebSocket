@@ -3,19 +3,19 @@
 
 ### Introduction
 
-This is an example of a client/server WebSocket. The WebSocket Protocol enables two-way communication between a client and a remote server. It provide a persistent connection between the client and the server and both parties can use to start sending data at any time.
+This is an example of a client/server WebSocket. The WebSocket Protocol enables two-way communication between a client and a remote server. It provides a persistent connection between the client and the server and both parties can sending data at any time.
 
-The goal of this technology is to provide a mechanism for browser-based applications that need  two-way communication with servers without reling on opening multiple HTTP connections.
+The goal of this technology is to provide a mechanism for browser-based applications that need two-way communication with servers without the needs to open multiple HTTP connections.
 
->The WebSocket specification defines two URI schemes:
->ws-URI = "ws:" "//" host [ ":" port ] path [ "?" query ]
->wss-URI = "wss:" "//" host [ ":" port ] path [ "?" query ]
+>The WebSocket specification defines two URI schemes:  
+>ws-URI = "ws:" "//" host [ ":" port ] path [ "?" query ]  
+>wss-URI = "wss:" "//" host [ ":" port ] path [ "?" query ]  
 
-The client is the browser with a simple JavaScript that will initiate the WebSocket `ws://` or secure WebSocket `wss://` connection to the server. In this workshop, I implemented both normal and secure WebSocket. I took the code for the JavaScript [here](https://www.pegaxchange.com/2018/03/23/websocket-client/).
+The client is the browser with a simple JavaScript that will initiate the WebSocket. It could be either `ws://`, which is the equivalent to `http://`, or secure WebSocket `wss://`, which is the equivalent to `https://`. In this workshop, I implemented both normal and secure WebSocket. I took the code for the JavaScript [here](https://www.pegaxchange.com/2018/03/23/websocket-client/).
 
-The server portion is implemented in Python. I took the code from Manos Pithikos. Check his GitHub page [here](https://github.com/Pithikos/python-websocket-server).
+The server portion is implemented in Python. You can you any programming language (PHP, Go, NodeJS, ...). I took the code from Manos Pithikos. Check his GitHub page [here](https://github.com/Pithikos/python-websocket-server).
 
-The web server and the WebSocket servers both run in a Docker container.
+The web server and the WebSocket server run in a Docker container.
 
 ### Architecture
 
@@ -48,7 +48,7 @@ The web page lets you enter the following information:
 - The IP address of the server.
 - The TCP port the server listens on.
 
-I made a workshop on building a simple web server with Nginx and PHP8. Take a look [here](https://github.com/ddella/PHP8-Nginx). The container is only 31Mb. This is the command to start the container is a network `public`. This network in a custom Docker network with the subnet `172.31.10.0/24`. 
+I made a workshop on building a simple web server with Nginx and PHP8. Take a look [here](https://github.com/ddella/PHP8-Nginx). The container is only 31Mb. This is the command to start the container is a network `public`. This network in a custom Docker network with the subnet `172.31.10.0/24`.
 
 ```command
 docker run --rm -d -p 8080:80 -p 8443:443 --name webserver --hostname webserver --domainname example.com --ip 172.31.10.10 --env TZ='EAST+5EDT,M3.2.0/2,M11.1.0/2' --env TIMEZONE='America/New_York' --network frontend  -v $PWD/www/:/www -v $PWD/logs/:/var/log/nginx php8_nginx
