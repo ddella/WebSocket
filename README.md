@@ -143,15 +143,15 @@ Start your browser, type this in the url bar `localhost:8080`, fill the informat
 
 ![Successful connection](images/connect.jpg "Success")
 
-## Links
+## Useful Links
 
-https://blog.teamtreehouse.com/an-introduction-to-websockets
-https://www.pegaxchange.com/2018/03/23/websocket-client/
-https://websockets.readthedocs.io/en/stable/index.html
-https://github.com/Pithikos/python-websocket-server
+- [Treehouse WebSocket Basics](https://blog.teamtreehouse.com/an-introduction-to-websockets)
+- [WebSocket Client in JavaScript](https://www.pegaxchange.com/2018/03/23/websocket-client/)
+- [Python websockets](https://websockets.readthedocs.io/en/stable/index.html)
+- [Manos Pithikos](https://github.com/Pithikos/python-websocket-server)
 
 ## License
 
 This project is licensed under the [MIT license](LICENSE).
 
-[_^ back to top_](Websocket-Server)
+[_^ back to top_](#Websocket-Server)
