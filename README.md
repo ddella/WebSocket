@@ -36,7 +36,7 @@ Before you begin with this guide, you'll need a basic understanding of the follo
 
 ## Step 1 - Clone all the files
 
-Copy all the files from GitHub to your local drive and change directory.
+Copy all the files from GitHub to your local drive and change directory. From now on, `$PWD` refers to the `WebSocket` directory.
 
 ```command
 git clone https://github.com/ddella/WebSocket.git
