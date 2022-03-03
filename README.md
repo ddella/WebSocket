@@ -7,9 +7,9 @@ This is an example of a client/server WebSocket. The WebSocket Protocol enables 
 
 The goal of this technology is to provide a mechanism for browser-based applications that need two-way communication with servers without the needs to open multiple HTTP connections.
 
->The WebSocket specification defines two URI schemes:
-ws-URI = "ws:" "//" host [ ":" port ] path [ "?" query ]
-wss-URI = "wss:" "//" host [ ":" port ] path [ "?" query ]  
+>The WebSocket specification defines two URI schemes:   
+>ws-URI = "ws:" "//" host [ ":" port ] path [ "?" query ]   
+>wss-URI = "wss:" "//" host [ ":" port ] path [ "?" query ]   
 
 The client is the browser with a simple JavaScript that will initiate the WebSocket. It could be either `ws://`, which is the equivalent to `http://`, or secure WebSocket `wss://`, which is the equivalent to `https://`. In this workshop, I implemented both normal and secure WebSocket. I took the code for the JavaScript [here](https://www.pegaxchange.com/2018/03/23/websocket-client/).
 
