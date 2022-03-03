@@ -199,7 +199,7 @@ docker run -it --rm --name ws --hostname ws --domainname example.com --ip 172.31
 
 Start your browser, type this url `localhost:8080`, fill the information and press `connect`. Type a message in the `input message box` and hit the button `Send Message`, if Successful, the server will send the message back in the box below. If the connect button is greyed out, it worked !
 
-![Successful connection](images/connected.jpg "Success")
+![Successful connection](images/connected.png "Success")
 
 ## Clean up
 
