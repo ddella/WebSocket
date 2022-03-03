@@ -196,17 +196,18 @@ docker run -it --rm --name ws --hostname ws --domainname example.com --ip 172.31
 
 ## Step 4 — Test the WebSocket Server
 
-Start your browser, type this url `localhost:8080`, fill the information and press `connect`. Type a message in the `input message box` and hit the button `Send Message`, if Successful, the server will send the message back in the box below.
+Start your browser, type this url `localhost:8080`, fill the information and press `connect`. Type a message in the `input message box` and hit the button `Send Message`, if Successful, the server will send the message back in the box below. If the connect button is greyed out, it worked !
 
 ![Successful connection](images/connect.jpg "Success")
 
 ## Clean up
 
-When you're done, it's always a good idea to clean everything
+When you're done, it's always a good idea to clean everything. If you followed all the steps, you should have three Docker containers running.
 
 ```command
 docker rm -f webserver
-docker rm -f websocket_server
+docker rm -f ws
+docker rm -f wss
 ```
 
 ## Useful Links
