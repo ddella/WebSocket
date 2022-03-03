@@ -69,7 +69,7 @@ The web server directory, inside the container, is mounted on your local drive i
 
 If everything works as expected, you should have a web server in a Docker container that you can reach with your favourite browser with the url `http://localhost:8080`.
 
-![Web server main web page](images/not-connected "Main Web Page")
+![Web server main web page](images/not-connected.jpg "Main Web Page")
 
 ## Step 3 — WebSocket Server
 
