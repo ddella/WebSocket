@@ -69,7 +69,7 @@ The web server directory, inside the container, is mounted on your local drive i
 
 If everything works as expected, you should have a web server in a Docker container that you can reach with your favourite browser with the url `http://localhost:8080`.
 
-![Web server main web page](images/not-connected.jpg "Main Web Page")
+![Web server main web page](images/not-connected.png "Main Web Page")
 
 ## Step 3 — WebSocket Server
 
@@ -104,7 +104,7 @@ The file `websocket.pem` is your self-signed certificate. It needs to be marked 
 
 2. Double clink on it and expand the **Trust**
 
-3. Select `Always Trust` in the **When using this certificate:**
+3. Select `Always Trust` in the **When using this certificate:**. The only one that needs to be `Always Trust` is the **Secure Sockets Layer (SSL)**.
 
 ![always trust](images/keychain2.jpg)
 
@@ -112,7 +112,7 @@ The file `websocket.pem` is your self-signed certificate. It needs to be marked 
 
 ![always trust](images/keychain3.jpg)
 
-5. Close this by pressing the **Red X** top left corner. You will be asked for you credential.
+5. Close this windows by pressing the **Close button** on the top left corner. You will be asked for you credential.
 
 6. The certificate status should be `This certificate is marked as trusted for this account`.
 
