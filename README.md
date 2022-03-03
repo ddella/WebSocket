@@ -72,9 +72,11 @@ websockets==10.2
 
 ### CREATE THE CERTIFICATE FOR SECURE WEBSOCKET `wss://`
 
-Please read [this document](certificate.md) to create the certificate. This is a simple `SSL/TLS` certificate. The tricky part is to have a self signed certificate that Firefox/Chrome/Safari will accept. This is the part that I struggled the most. The troubleshooting part for the certificate part is extremely hard. Do not underestimate this part 😀.
+Please read [this document](certificate.md) to create the certificate. It's a simple `SSL/TLS` certificate. The tricky part is to have a self signed certificate that Firefox/Chrome/Safari will accept. This is the part that I struggled the most. The troubleshooting for the certificate part is extremely hard. Do not underestimate this part 😀.
 
-If you use Firefox, you might get this error `SEC_ERROR_UNKNOWN_ISSUER`. It can be easily fixed by permitting Firefox to import any root certificate authorities (CAs) that have been added to the operating system. **DON'T FORGET TO ENFORE THE CHECK** back when you're done.
+If you use Firefox, you might get the error `SEC_ERROR_UNKNOWN_ISSUER`. It can be easily fixed by permitting Firefox to import any root certificate authorities (CAs) that have been added to the operating system.
+
+**DON'T FORGET TO ENFORE THE CHECK** back when you're done.
 
 #### IMPORT ROOT CERTIFICATE AUTHORITIES
 
@@ -89,7 +91,8 @@ If you use Firefox, you might get this error `SEC_ERROR_UNKNOWN_ISSUER`. It can 
 7. Refresh the Websocket page.
 
 ![security.enterprise_roots.enabled](images/firefox-SEC_ERROR_UNKNOWN_ISSUER.jpg "Firefox")
-![Enable Enterprise Roots](https://support.mozilla.org/en-US/kb/how-disable-enterprise-roots-preference "Enable Enterprise Roots")
+
+![Enable Enterprise Roots](https://support.mozilla.org/en-US/kb/how-disable-enterprise-roots-preference/ "Enable Enterprise Roots")
 ### CREATE THE PYTHON DOCKER CONTAINER
 
 1. Get the Python image from [Docker hub](https://hub.docker.com/_/python/). This is the official image based on Alpine. I wanted to keep the image as small as possible.
