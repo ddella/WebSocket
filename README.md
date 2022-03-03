@@ -23,7 +23,7 @@ The web server and the WebSocket server run in a Docker container.
 
 ## Prerequisites
 
-Before you begin with this guide, you'll need the following:
+Before you begin with this guide, you'll need a basic understanding of the following technologies:
 
 - Familiarity with [Docker](https://www.docker.com/).
 - Familiarity with [Python](https://www.python.org/).
@@ -31,11 +31,11 @@ Before you begin with this guide, you'll need the following:
 
 ## Step 1 - Clone all the files
 
-Copy all the files for GitHub to your local drive.
+Copy all the files from GitHub to your local drive and change directory.
 
 ```command
-git clone https://github.com/ddella/<DIRECTORY>.git
-cd <DIRECTORY>
+git clone https://github.com/ddella/WebSocket.git
+cd WebSocket
 ```
 
 ## Step 2 — Web Server
@@ -44,11 +44,11 @@ You need a web server to present a web page for the users to enter all the param
 
 The web page lets you enter the following information:
 
-- Choose between `ws://` or secure WebSocket `wss://` connection.
-- The IP address of the server.
+- Choose between WebSocket `ws://` or secure WebSocket `wss://` connection.
+- The IP address of the WebSocket server.
 - The TCP port the server listens on.
 
-I made a workshop on building a simple web server with Nginx and PHP8. Take a look [here](https://github.com/ddella/PHP8-Nginx). The container is only 31Mb. This is the command to start the container is a network `public`. This network in a custom Docker network with the subnet `172.31.10.0/24`.
+I made a workshop on building a simple web server with Nginx and PHP8. Take a look [here](https://github.com/ddella/PHP8-Nginx). The container is only 31Mb. This is the command to start the container in a custom network `frontend`. This network in a custom Docker network with the subnet `172.31.10.0/24`.
 
 ```command
 docker run --rm -d -p 8080:80 -p 8443:443 --name webserver --hostname webserver --domainname example.com --ip 172.31.10.10 --env TZ='EAST+5EDT,M3.2.0/2,M11.1.0/2' --env TIMEZONE='America/New_York' --network frontend  -v $PWD/www/:/www -v $PWD/logs/:/var/log/nginx php8_nginx
