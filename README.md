@@ -64,7 +64,7 @@ If everything worked as expected, you should have a web server in a Docker conta
 
 The WebSocket server runs on Python. I built a Python Docker container based on Alpine Linux 3.15. The image is only 55.6MB. When building the image, only the package `websockets` version 10.2 is required.
 
-I still like to have a `requirements.txt` file to get the package(s) when building a Python container. If you want more Python packages, just add them on a separate line.
+I still like to have a `requirements.txt` file to get the package(s) when building a Python container. If you want more Python packages, just add them at the end of the file.
 
 ```txt
 websockets==10.2
@@ -72,7 +72,7 @@ websockets==10.2
 
 ### CREATE THE CERTIFICATE FOR SECURE WEBSOCKET `wss://`
 
-Please read [this document](certificate.md) to create the certificate. It's a simple `SSL/TLS` certificate. The tricky part is to have a self signed certificate that Firefox/Chrome/Safari will accept. This is the part that I struggled the most. The troubleshooting for the certificate part is extremely hard. Do not underestimate this part 😀.
+Please read [this document](certificate.md) to create the certificate. It's a simple `SSL/TLS` certificate. The tricky part is to have a self signed certificate that Firefox/Chrome/Safari will accept. This is the part that I struggled the most. The troubleshooting for the certificate part is extremely hard, do not underestimate this part 😀.
 
 If you use Firefox, you might get the error `SEC_ERROR_UNKNOWN_ISSUER`. It can be easily fixed by permitting Firefox to import any root certificate authorities (CAs) that have been added to the operating system.
 
@@ -96,9 +96,9 @@ Check the how-to on Mozilla's web site: ![Enable Enterprise Roots](https://suppo
 
 ### CREATE THE PYTHON DOCKER CONTAINER
 
-This container contains the latest version of Python.
+This container contains the latest version of Python. It is basically a Python interpreter. When you start the container, you specify the `.py` file.
 
-1. Get the Python image from [Docker hub](https://hub.docker.com/_/python/). This is the official image based on Alpine. I wanted to keep the image as small as possible.
+1. Get the Python image from [Docker hub](https://hub.docker.com/_/python/). This is the official image based on Alpine Linux. I wanted to keep the image as small as possible.
 
 ```command
 docker pull python:alpine3.15
@@ -135,11 +135,11 @@ This command starts the WebSocket server in non-secure mode `ws://`. It exposes 
 docker run -it --rm --name ws --hostname ws --domainname example.com --ip 172.31.10.20 -p 10080:10080 --network frontend --mount type=bind,source="$(pwd)"/server,target=/usr/src/myapp,readonly -w /usr/src/myapp websocket_server python secure_ws.py 172.31.10.20 10080
 ```
 
->You can start both WebSocket servers since they listen on different TCP port and the mounted directory is readonly.
+>You can start both `ws://` and `wss://` servers since they listen on different TCP port and the mounted directory is readonly. It's the same Python script, I just did a small hack so if you don't supply a certificate it starts in non-secure mode.
 
 ## Step 4 — Test the WebSocket Server
 
-Start your browser, type this in the url bar `localhost:8080`, fill the information and press `connect`. Type a message in the `input message box` and hit the button `Send Message`, if Successful, the server will send the message back in the box below.
+Start your browser, type this url `localhost:8080`, fill the information and press `connect`. Type a message in the `input message box` and hit the button `Send Message`, if Successful, the server will send the message back in the box below.
 
 ![Successful connection](images/connect.jpg "Success")
 
