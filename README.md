@@ -206,8 +206,6 @@ When you're done, it's always a good idea to clean everything. If you followed a
 
 ```command
 docker rm -f webserver
-docker rm -f ws
-docker rm -f wss
 ```
 
 ## Useful Links
