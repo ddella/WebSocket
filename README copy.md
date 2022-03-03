@@ -82,33 +82,13 @@ websockets==10.2
 
 ### CREATE THE CERTIFICATE FOR SECURE WEBSOCKET `wss://`
 
-Secure WebSocket requires a `SSL/TLS` certificate, the same way as `https`. In this workshop, we'll use a self-signed certificate. The tricky part is to have this self-signed certificate being accepted by Firefox/Chrome/Safari. This is the part that I struggled the most. The troubleshooting for the certificate part is extremely hard, do not underestimate this part 😀.
+Please read [this document](certificate.md) to create the certificate. It's a simple `SSL/TLS` certificate. The tricky part is to have a self signed certificate that Firefox/Chrome/Safari will accept. This is the part that I struggled the most. The troubleshooting for the certificate part is extremely hard, do not underestimate this part 😀.
 
-I used this simple command to generate a self-signed certificate for the secure WebSocket communication.
-
-```command
-cd server
-openssl req -new -x509 -keyout websocket.pem -out websocket.pem -sha256 -days 3650 -config ../ssl/websocket.cnf -extensions v3_ca -nodes
-cd ..
-```
-
-**After you start the server**, you can use this command to check whether the certificate is valid, trusted, and complete:
-
-```command
-openssl s_client -connect 127.0.0.1:10443
-```
-
-The `-k` allows curl to proceed and operate even for server connections otherwise considered insecure.
-
-```command
-curl -kvI https://127.0.0.1:10443
-```
-
-#### IMPORT ROOT CERTIFICATE AUTHORITIES (**FIREFOX ONLY**)
-
-If you use **Firefox**, you might get the error `SEC_ERROR_UNKNOWN_ISSUER`. It can be easily fixed by permitting Firefox to import any root certificate authorities (CAs) that have been added to the operating system.
+If you use Firefox, you might get the error `SEC_ERROR_UNKNOWN_ISSUER`. It can be easily fixed by permitting Firefox to import any root certificate authorities (CAs) that have been added to the operating system.
 
 **DON'T FORGET TO ENFORE THE CHECK** back when you're done.
+
+#### IMPORT ROOT CERTIFICATE AUTHORITIES
 
 >**Warning**: Changing advanced preferences can affect Firefox's stability and security. This is recommended for **advanced users only**.
 
