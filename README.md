@@ -1,16 +1,14 @@
 ﻿
-# Websocket Server
+# WebSocket Client Server
 
 ### Introduction
 
-This is an example of a client/server WebSocket. In this workshop I build two Docker containers:
+This is an example of a client/server WebSocket. The client and server are build on different Docker containers:
 
 - Web Server on Nginx
 - WebSocket server in Python
 
-The WebSocket Protocol enables two-way communication between a client and a remote server. It provides a persistent connection between the client and the server and both parties can sending data at any time.
-
-The goal of this technology is to provide a mechanism for browser-based applications that need two-way communication with servers without the need to open multiple HTTP connections.
+The WebSocket Protocol enables bi-directional, full duplex communications protocol between a client and a server. It provides a persistent connection between the client and the server and both parties can sending data at any time. It is commonly used in modern web applications for streaming data and other asynchronous traffic. The goal of this technology is to provide a mechanism for browser-based applications that need two-way communication with servers without the need to open multiple HTTP connections.
 
 >The WebSocket specification defines two URI schemes:   
 >ws-URI = "ws:" "//" host [ ":" port ] path [ "?" query ]   
@@ -18,20 +16,27 @@ The goal of this technology is to provide a mechanism for browser-based applicat
 
 The client is the browser with a simple JavaScript that will initiate the WebSocket. It could be either `ws://`, which is the equivalent to `http://`, or secure WebSocket `wss://`, which is the equivalent to `https://`. In this workshop, I implemented both secure and non-secure WebSocket server. I took the code for the frontend, HTML and JavaScript, [here](https://www.pegaxchange.com/2018/03/23/websocket-client/).
 
-The server portion is implemented in Python. You can you any programming language (PHP, Go, NodeJS, ...). I took the code from Manos Pithikos. Check his GitHub page [here](https://github.com/Pithikos/python-websocket-server).
+The server portion is implemented in Python. You can use any programming language for the server side (PHP, Go, NodeJS, ...). I took the code from Manos Pithikos. Check his GitHub page [here](https://github.com/Pithikos/python-websocket-server).
 
 ### Architecture
 
-Both containers run on the same custom network. They expose `TCP/8080` and `TCP/8443` for the web server and `TCP/10080` and `TCP/10443` for the WebSocket server.
+Both containers run on the same _Docker custom network_. This workshop is not about _Docker custom network_ but I encourage you to run your containers in custom network to get the benefice of a DNS. The following command was used to create the `frontend` network.
+
+```command
+docker network create --driver=bridge --subnet=172.31.10.0/24 --ip-range=172.31.10.128/25 --gateway=172.31.10.1 frontend
+```
+
+The Docker containers expose `TCP/8080` and `TCP/8443`, for the web server, and `TCP/10080` and `TCP/10443`, for the WebSocket server. These ports are exposed outside the Docker host.
 
 ![WebSocket Architecture](images/architecture.jpg "Architecture")
 
 ## Prerequisites
 
-Before you begin with this guide, you'll need a basic understanding of the following technologies:
+Before you begin with this workshop, you'll need basic understanding of the following technologies:
 
 - Familiarity with [Docker](https://www.docker.com/).
 - Familiarity with [Python](https://www.python.org/).
+- Familiarity with [JavaScript](https://www.w3schools.com/js/default.asp).
 - Familiarity with [WebSockets - RFC6455](https://datatracker.ietf.org/doc/html/rfc6455).
 
 ## Step 1 - Clone all the files
@@ -53,7 +58,7 @@ The web page lets you enter the following information:
 - The IP address of the WebSocket server.
 - The TCP port the server listens on.
 
-I made a workshop on building a simple web server with Nginx and PHP8. Take a look [here](https://github.com/ddella/PHP8-Nginx). The container is only 31Mb. This is the command to start the container in a custom network `frontend`. The subnet is `172.31.10.0/24`.
+I made a workshop on building a simple web server based on Alpine Linux with Nginx and PHP8. Take a look [here](https://github.com/ddella/PHP8-Nginx). The container is only 31Mb. This is the command to start the container in a custom network `frontend`. The subnet is `172.31.10.0/24`.
 
 ```command
 docker run --rm -d -p 8080:80 -p 8443:443 --name webserver --hostname webserver --domainname example.com --ip 172.31.10.10 --env TZ='EAST+5EDT,M3.2.0/2,M11.1.0/2' --env TIMEZONE='America/New_York' --network frontend  -v $PWD/www/:/www -v $PWD/logs/:/var/log/nginx php8_nginx
@@ -61,13 +66,13 @@ docker run --rm -d -p 8080:80 -p 8443:443 --name webserver --hostname webserver 
 
 The web server directory, inside the container, is mounted on your local drive in `$PWD/www/`. You will be able to change the HTML/CSS/JavaScript file without needing to restart the web server. I also mounted a local directory for the logs, in case you need to troubleshoot 😉.
 
-If everything worked as expected, you should have a web server in a Docker container that you can reach with your favourite browser with the url `http://localhost:8080`.
+If everything works as expected, you should have a web server in a Docker container that you can reach with your favourite browser with the url `http://localhost:8080`.
 
 ![Web server main web page](images/webpage.jpg "Main Web Page")
 
 ## Step 3 — WebSocket Server
 
-The WebSocket server runs on Python. I built a Python Docker container based on Alpine Linux 3.15. The image is only 55.6MB. When building the image, only the package `websockets` version 10.2 is required.
+The WebSocket server runs on Python. I built a Python Docker container based on Alpine Linux 3.15. The image is only 55.6MB. When building the image, only the Python package `websockets` version 10.2 is required.
 
 I still like to have a `requirements.txt` file to get the package(s) when building a Python container. If you want more Python packages, just add them at the end of the file.
 
@@ -151,12 +156,14 @@ Start your browser, type this url `localhost:8080`, fill the information and pre
 ## Useful Links
 
 - [Nice basic WebSocket tutorial](https://blog.teamtreehouse.com/an-introduction-to-websockets)
+- [How Do Websockets Work?](https://sookocheff.com/post/networking/how-do-websockets-work/)
 - [WebSocket Client frontend](https://www.pegaxchange.com/2018/03/23/websocket-client/)
 - [Python websockets module](https://websockets.readthedocs.io/en/stable/index.html)
 - [Manos Pithikos Python WebSocket server](https://github.com/Pithikos/python-websocket-server)
+- [Writing WebSocket client applications](https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API/Writing_WebSocket_client_applications)
 
 ## License
 
 This project is licensed under the [MIT license](LICENSE).
 
-[_^ back to top_](#Websocket-Server)
+[_^ back to top_](#Websocket-Client-Server)
