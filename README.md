@@ -28,10 +28,10 @@ docker network create --driver=bridge --subnet=172.31.10.0/24 --ip-range=172.31.
 ```
 
 The Docker containers expose the following TCP ports:
-- Web Server **HTTP://** on `TCP/8080`.
-- Web Server **HTTPS://** on `TCP/8443`.
-- WebSocket **Server WS://** on `TCP/9080`.
-- WebSocket **Server WSS://** on `TCP/9443`.
+- Nginx Web Server **http://** on `TCP/8080`.
+- Nginx Web Server **https://** on `TCP/8443`.
+- WebSocket Server **ws://** on `TCP/9080`.
+- WebSocket Server **wss://** on `TCP/9443`.
 
 These ports are exposed outside the Docker host.
 
