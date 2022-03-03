@@ -2,13 +2,13 @@
 
 ## Introduction
 
-Steps to create the SSL/TLS certificate for the WebSocket server `wss://`.
+Steps to create a self-signed SSL/TLS certificate for SSL/TLS. This can be used for `https://` or WebSocket server `wss://`.
 
-Create a directory named `ssl` and change directory.
+Create a directory named `ssl` or whatever you like and change directory.
 
 ```command
 mkdir ssl
-cd sll
+cd ssl
 ```
 
 ## Generate the certificate
@@ -63,4 +63,3 @@ echo | openssl s_client -servername 127.0.0.1 -connect 127.0.0.1:8766 2>/dev/nul
 ```command
 echo | openssl s_client -servername 127.0.0.1 -connect 127.0.0.1:10443 2>/dev/null | openssl x509 -noout -dates
 ```
-

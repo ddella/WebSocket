@@ -82,13 +82,33 @@ websockets==10.2
 
 ### CREATE THE CERTIFICATE FOR SECURE WEBSOCKET `wss://`
 
-Secure WebSocket requires a `SSL/TLS` certificate, the same way as `https`. In this workshop, we'll use a self-signed certificate. The tricky part is to have this self-signed certificate being accepted by Firefox/Chrome/Safari. This is the part that I struggled the most. The troubleshooting for the certificate part is extremely hard, do not underestimate this part 😀.
+Secure WebSocket requires a standard `SSL/TLS` certificate, the same way as `https`. In this workshop, we'll use a **self-signed** certificate. The tricky part is to have this self-signed certificate being accepted by Firefox/Chrome/Safari. This is the part that I struggled the most. Troubleshooting self-signed certificate can be hard 😀.
 
-I used this simple command to generate a self-signed certificate for the secure WebSocket communication.
+If you're on a Linux or macOS, use `openssl`. Just type the following commands to generate the self-signed certificate.
 
 ```command
-openssl req -new -x509 -newkey rsa:4096 -keyout server/websocket.pem -out server/websocket.pem -sha256 -days 3650 -config ssl/websocket.cnf -extensions v3_ca -nodes
+openssl genrsa -out ssl/websocket_rootCA.key 4096
+openssl req -x509 -new -nodes -key ssl/websocket_rootCA.key -sha256 -days 3650 -out ssl/websocket_rootCA.crt -config ssl/websocket.cnf -extensions v3_ca -subj "/CN=websocket Root CA"
+openssl genrsa -out ssl/websocket.key 4096
+openssl req -new -key ssl/websocket.key -out ssl/websocket.csr -config ssl/websocket.cnf -extensions v3_req
+openssl x509 -req -in ssl/websocket.csr -CA ssl/websocket_rootCA.crt -CAkey ssl/websocket_rootCA.key -CAcreateserial -out ssl/websocket.crt -days 3650 -sha256 -extfile ssl/websocket.cnf -extensions v3_req
+cat ssl/websocket.crt ssl/websocket.key > server/websocket.pem
 ```
+
+The file `websocket.pem` is your self-signed certificate. It needs to be marked as **trusted for this account** in your OS.
+
+1. In the case of macOS, open the file `server/websocket.pem` in KeyChain.
+![untrusted new certificate](images/keychain1)
+2. Double clink on it and expand the **Trust**
+3. Select `Always Trust` in the **When using this certificate:**
+![always trust](images/keychain2)
+4. Every elements are `Always Trust`
+![always trust](images/keychain3)
+5. Close this by pressing the **Red X** top left corner. You will be asked for you credential.
+6. The certificate status should be `This certificate is marked as trusted for this account`.
+![always trust](images/keychain4)
+
+### TEST THE CERTIFICATE
 
 **After you start the server**, you can use this command to check whether the certificate is valid, trusted, and complete:
 
@@ -149,18 +169,18 @@ docker build -t websocket_server .
 ```
 4. Run WebSocket in Secure mode `wss://`
 
-This command starts the WebSocket server in secure mode `wss://`. It exposes TCP port `10443`. Make sure you have the Python script in the directory `server` as well as the certificate. The mounted directory is readonly, since I will also start a non-secure WebSocket server fron the same script.
+This command starts the WebSocket server in secure mode `wss://`. It exposes TCP port `9443`. Make sure you have the Python script in the directory `server` as well as the certificate. The mounted directory is readonly, since I will also start a non-secure WebSocket server fron the same script.
 
 ```command
-docker run -it --rm --name wss --hostname wss --domainname example.com --ip 172.31.10.20 -p 10443:10443 --network frontend --mount type=bind,source="$(pwd)"/server,target=/usr/src/myapp,readonly -w /usr/src/myapp websocket_server python secure_ws.py 172.31.10.20 10443 websocket.pem
+docker run -it --rm --name wss --hostname wss --domainname example.com --ip 172.31.10.20 -p 9443:9443 --network frontend --mount type=bind,source="$(pwd)"/server,target=/usr/src/myapp,readonly -w /usr/src/myapp websocket_server python secure_ws.py 172.31.10.20 9443 websocket.pem
 ```
 
 5. Run WebSocket in non-secure mode `ws://`
 
-This command starts the WebSocket server in non-secure mode `ws://`. It exposes TCP port `10080`.
+This command starts the WebSocket server in non-secure mode `ws://`. It exposes TCP port `9080`.
 
 ```command
-docker run -it --rm --name ws --hostname ws --domainname example.com --ip 172.31.10.20 -p 10080:10080 --network frontend --mount type=bind,source="$(pwd)"/server,target=/usr/src/myapp,readonly -w /usr/src/myapp websocket_server python secure_ws.py 172.31.10.20 10080
+docker run -it --rm --name ws --hostname ws --domainname example.com --ip 172.31.10.21 -p 9080:9080 --network frontend --mount type=bind,source="$(pwd)"/server,target=/usr/src/myapp,readonly -w /usr/src/myapp websocket_server python secure_ws.py 172.31.10.21 9080
 ```
 
 >You can start both `ws://` and `wss://` servers since they listen on different TCP port and the mounted directory is readonly. It's the same Python script, I just did a small hack so if you don't supply a certificate it starts in non-secure mode.
@@ -170,6 +190,15 @@ docker run -it --rm --name ws --hostname ws --domainname example.com --ip 172.31
 Start your browser, type this url `localhost:8080`, fill the information and press `connect`. Type a message in the `input message box` and hit the button `Send Message`, if Successful, the server will send the message back in the box below.
 
 ![Successful connection](images/connect.jpg "Success")
+
+## Clean up
+
+When you're done, it's always a good idea to clean everything
+
+```command
+docker rm -f webserver
+docker rm -f websocket_server
+```
 
 ## Useful Links
 
