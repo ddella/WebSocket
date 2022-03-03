@@ -98,39 +98,21 @@ cat ssl/websocket.crt ssl/websocket.key > server/websocket.pem
 
 The file `websocket.pem` is your self-signed certificate. It needs to be marked as **trusted for this account** in your OS.
 
-1. In the case of macOS, open the file `server/websocket.pem` in KeyChain.
+1. In the case of macOS, open the file `server/websocket.pem` in KeyChain. Right click -> Open With -> KeyChain Access (default)
 
 ![untrusted new certificate](images/keychain1.png)
 
 2. Double clink on it and expand the **Trust**.
 
-3. Select `Always Trust` in the **When using this certificate:**. The only one that needs to be `Always Trust` is the **Secure Sockets Layer (SSL)**.
+3. Select `Always Trust` for **Secure Sockets Layer (SSL)**. This is the minimal that is needed.
 
 ![always trust](images/keychain2.png)
 
-4. The element **Secure Sockets Layer (SSL)** is `Always Trust`.
+4. Close this windows by pressing the **Close button** on the top left corner (red circle). You will be asked for you credential.
 
-![always trust](images/keychain3.png)
-
-5. Close this windows by pressing the **Close button** on the top left corner. You will be asked for you credential.
-
-6. The certificate status should be `This certificate is marked as trusted for this account`.
+5. The certificate status should be `This certificate is marked as trusted for this account`.
 
 ![always trust](images/keychain4.png)
-
-### TEST THE CERTIFICATE
-
-**After you start the server**, you can use this command to check whether the certificate is valid, trusted, and complete:
-
-```command
-openssl s_client -connect 127.0.0.1:10443
-```
-
-The `-k` allows curl to proceed and operate even for server connections otherwise considered insecure.
-
-```command
-curl -kvI https://127.0.0.1:10443
-```
 
 #### IMPORT ROOT CERTIFICATE AUTHORITIES (**FIREFOX ONLY**)
 
@@ -200,6 +182,23 @@ docker run -it --rm --name ws --hostname ws --domainname example.com --ip 172.31
 Start your browser, type this url `localhost:8080`, fill the information and press `connect`. Type a message in the `input message box` and hit the button `Send Message`, if Successful, the server will send the message back in the box below. If the connect button is greyed out, it worked !
 
 ![Successful connection](images/connected.png "Success")
+
+## TEST THE CERTIFICATE
+
+In case you run into problem with the secure WebSocket, you can use the commands below to check whether the certificate is valid, trusted, and complete.
+Open a `terminal` window.
+
+```command
+openssl s_client -connect 127.0.0.1:9443
+```
+
+You can also use `curl`.
+
+>The `-k` allows curl to proceed and operate even for server connections otherwise considered insecure, like self-signed certificate.
+
+```command
+curl -kvI https://127.0.0.1:9443
+```
 
 ## Clean up
 
