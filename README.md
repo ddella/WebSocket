@@ -92,8 +92,11 @@ If you use Firefox, you might get the error `SEC_ERROR_UNKNOWN_ISSUER`. It can b
 
 ![security.enterprise_roots.enabled](images/firefox-SEC_ERROR_UNKNOWN_ISSUER.jpg "Firefox")
 
-![Enable Enterprise Roots](https://support.mozilla.org/en-US/kb/how-disable-enterprise-roots-preference/ "Enable Enterprise Roots")
+Check the how-to on Mozilla's web site: ![Enable Enterprise Roots](https://support.mozilla.org/en-US/kb/how-disable-enterprise-roots-preference/)
+
 ### CREATE THE PYTHON DOCKER CONTAINER
+
+This container contains the latest version of Python.
 
 1. Get the Python image from [Docker hub](https://hub.docker.com/_/python/). This is the official image based on Alpine. I wanted to keep the image as small as possible.
 
@@ -104,7 +107,6 @@ docker pull python:alpine3.15
 2. Create a file named `Dockefile`.
 
 ```docker
-[label Dockerfile]
 FROM python:alpine3.15
 WORKDIR /usr/src/app
 COPY requirements.txt ./
@@ -119,10 +121,10 @@ docker build -t websocket_server .
 ```
 4. Run WebSocket in Secure mode `wss://`
 
-This command starts the WebSocket server in secure mode `wss://`. It exposes TCP port `10443`.
+This command starts the WebSocket server in secure mode `wss://`. It exposes TCP port `10443`. Make sure you have the Python script in the directory `server` as well as the certificate. The mounted directory is readonly, since I will also start a non-secure WebSocket server fron the same script.
 
 ```command
-docker run -it --rm --name wss --hostname wss --domainname example.com --ip 172.31.10.20 -p 10443:10443 --network frontend --mount type=bind,source="$(pwd)"/app,target=/usr/src/myapp,readonly -w /usr/src/myapp websocket_server python secure_ws.py 172.31.10.20 10443 websocket.pem
+docker run -it --rm --name wss --hostname wss --domainname example.com --ip 172.31.10.20 -p 10443:10443 --network frontend --mount type=bind,source="$(pwd)"/server,target=/usr/src/myapp,readonly -w /usr/src/myapp websocket_server python secure_ws.py 172.31.10.20 10443 websocket.pem
 ```
 
 5. Run WebSocket in non-secure mode `ws://`
@@ -130,14 +132,14 @@ docker run -it --rm --name wss --hostname wss --domainname example.com --ip 172.
 This command starts the WebSocket server in non-secure mode `ws://`. It exposes TCP port `10080`.
 
 ```command
-docker run -it --rm --name ws --hostname ws --domainname example.com --ip 172.31.10.20 -p 10080:10080 --network frontend --mount type=bind,source="$(pwd)"/app,target=/usr/src/myapp,readonly -w /usr/src/myapp websocket_server python secure_ws.py 172.31.10.20 10080
+docker run -it --rm --name ws --hostname ws --domainname example.com --ip 172.31.10.20 -p 10080:10080 --network frontend --mount type=bind,source="$(pwd)"/server,target=/usr/src/myapp,readonly -w /usr/src/myapp websocket_server python secure_ws.py 172.31.10.20 10080
 ```
 
-You can start both WebSocket servers since they listen on different TCP port.
+>You can start both WebSocket servers since they listen on different TCP port and the mounted directory is readonly.
 
 ## Step 4 — Test the WebSocket Server
 
-Start your browser, type this in the url bar `localhost:8080` and fill the information.
+Start your browser, type this in the url bar `localhost:8080`, fill the information and press `connect`. Type a message in the `input message box` and hit the button `Send Message`, if Successful, the server will send the message back in the box below.
 
 ![Successful connection](images/connect.jpg "Success")
 
@@ -151,13 +153,5 @@ https://github.com/Pithikos/python-websocket-server
 ## License
 
 This project is licensed under the [MIT license](LICENSE).
-
-### Clean the log file
-
-Clean the log file from the log generated in the step above:
-```command
-: > logs/access.log
-: > logs/error.log
-```
 
 [_^ back to top_](Websocket-Server)
