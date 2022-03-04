@@ -6,44 +6,14 @@
       <script src="/javascript/wsclient.js"></script>
       <meta charset="utf-8">
       <title>WebSockets Demo</title>
-      <!-- <link rel="stylesheet" href="/css/wsclient.css"> -->
+      <link rel="stylesheet" href="/css/wsclient.css">
       <link rel="icon" type="image/x-icon" href="/images/websocket.svg">
-      <style>
-          table    { border: 2px solid black; }
-          input    { width: 300px; }
-          select   { width: 300px; }
-          textarea { width: 513px; border: 2px solid black; }
-          #btnConnect    { width: 100px; }
-          #btnDisconnect { width: 100px; }
-          #btnSend       { width: 100px; }
-
-          .open {
-             border: 5px;
-             border-style: solid;
-             border-color: green;
-            text-align: center;
-            width: 513px;
-            font-family: 'Consolas';
-          }
-          .closed {
-            /* border: 5px outset red; */
-            border: 5px;
-            border-style: solid;
-            border-color: red;
-            text-align: center;
-            width: 513px;
-            font-family: 'Consolas';
-          }
-          .bold {
-              font-weight: bolder;
-          }
-      </style>
    </head>
     <body>
         <h1>WebSocket Client</h1>
         <!-- WebSocket Connection Parameters Table -->
         <div class="closed" id="status">Not connected</div><br>
-        <table>
+        <table class="table_ws_closed" id="table_ws">
             <tr>
                 <td width="200px">WS Protocol</td>
                 <td>

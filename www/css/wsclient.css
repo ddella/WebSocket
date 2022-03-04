@@ -1,0 +1,35 @@
+table    { border: 2px solid black; }
+input    { width: 300px; }
+select   { width: 300px; }
+textarea { width: 513px; border: 2px solid black; }
+#btnConnect    { width: 100px; }
+#btnDisconnect { width: 100px; }
+#btnSend       { width: 100px; }
+
+.table_ws_closed {
+  border: 3px solid red;
+}
+.table_ws_open {
+  border: 3px solid green;
+}
+
+.open {
+  border: 5px;
+  border-style: solid;
+  border-color: green;
+ text-align: center;
+ width: 513px;
+ font-family: 'Consolas';
+}
+.closed {
+ /* border: 5px outset red; */
+ border: 5px;
+ border-style: solid;
+ border-color: red;
+ text-align: center;
+ width: 513px;
+ font-family: 'Consolas';
+}
+.bold {
+    font-weight: bolder;
+}
