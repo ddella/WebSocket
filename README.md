@@ -173,10 +173,9 @@ docker build -t websocket_server .
 
 If everything works as expected, you now have a new container called `websocket_server`.
 
-   % docker images
-   REPOSITORY               TAG       IMAGE ID       CREATED         SIZE
-   websocket_server         latest    23ad42770a82   1 minute ago    55.6MB
-
+      % docker images
+      REPOSITORY               TAG       IMAGE ID       CREATED         SIZE
+      websocket_server         latest    23ad42770a82   1 minute ago    55.6MB
 
 5. Run a WebSocket server in Secure mode `wss://`
 
