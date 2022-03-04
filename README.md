@@ -11,6 +11,8 @@ This workshop is about building a client and server WebSocket on different Docke
 
 The WebSocket Protocol enables bi-directional, full duplex communications protocol between a client and a server. It provides a persistent connection between them and both parties can sending data at any time. It is commonly used in modern web applications for streaming data and other asynchronous traffic. The goal of this technology is to provide a mechanism for browser-based applications that need two-way communication with servers without the need to open multiple HTTP connections.
 
+<a title="Brivadeneira, CC BY-SA 4.0 &lt;https://creativecommons.org/licenses/by-sa/4.0&gt;, via Wikimedia Commons" href="https://commons.wikimedia.org/wiki/File:Websocket_connection.png"><img width="128" alt="Websocket connection" src="https://upload.wikimedia.org/wikipedia/commons/1/10/Websocket_connection.png"></a>
+
 >The WebSocket specification defines two URI schemes:   
 >ws-URI = "ws:" "//" host [ ":" port ] path [ "?" query ]   
 >wss-URI = "wss:" "//" host [ ":" port ] path [ "?" query ]   
