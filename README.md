@@ -3,13 +3,13 @@
 
 ### Introduction
 
-This is an example of a client/server WebSocket. The client and server are build on different Docker containers:
+This workshop is about building a client and server WebSocket on different Docker containers.
 
-- Web Server on Nginx
-- Secure WebSocket Server in Python
-- Non-Secure WebSocket Server in Python
+- Web Server on Nginx, that will host the JavaScript (the Client)
+- Secure WebSocket Server in Python (the Server)
+- Non-Secure WebSocket Server in Python (the Server)
 
-The WebSocket Protocol enables bi-directional, full duplex communications protocol between a client and a server. It provides a persistent connection between the client and the server and both parties can sending data at any time. It is commonly used in modern web applications for streaming data and other asynchronous traffic. The goal of this technology is to provide a mechanism for browser-based applications that need two-way communication with servers without the need to open multiple HTTP connections.
+The WebSocket Protocol enables bi-directional, full duplex communications protocol between a client and a server. It provides a persistent connection between them and both parties can sending data at any time. It is commonly used in modern web applications for streaming data and other asynchronous traffic. The goal of this technology is to provide a mechanism for browser-based applications that need two-way communication with servers without the need to open multiple HTTP connections.
 
 >The WebSocket specification defines two URI schemes:   
 >ws-URI = "ws:" "//" host [ ":" port ] path [ "?" query ]   
@@ -21,19 +21,18 @@ The server portion is implemented in Python. You can use any programming languag
 
 ### Architecture
 
-Both containers run on the same _Docker custom network_. This workshop is not about _Docker custom network_ but I encourage you to run your containers in custom network to get the added value of a DNS server. The following command was used to create the `frontend` network.
+All the containers run on the same _Docker custom network_. This workshop is not about _Docker custom network_ but I encourage you to run your containers in custom network to get the added value of a DNS server. The following command was used to create the `frontend` network.
 
 ```command
 docker network create --driver=bridge --subnet=172.31.10.0/24 --ip-range=172.31.10.128/25 --gateway=172.31.10.1 frontend
 ```
 
-The Docker containers expose the following TCP ports:
+The Docker containers expose the following TCP ports on the Docker host:
+
 - Nginx Web Server **http://** on `TCP/8080`.
 - Nginx Web Server **https://** on `TCP/8443`.
 - WebSocket Server **ws://** on `TCP/9080`.
 - WebSocket Server **wss://** on `TCP/9443`.
-
-The ports are exposed outside the Docker host.
 
 ![WebSocket Architecture](images/architecture.jpg "Architecture")
 
@@ -57,7 +56,7 @@ cd WebSocket
 
 ## Step 2 — Web Server
 
-You need a web server to present a web page for the users to enter all the parameters needed to create the WebSocket. The magic to create the TCP connection is done within the JavaScript.
+You need a web server to present a web page for the users to enter all the parameters needed to create the WebSocket. The magic to create the TCP connection is done within the JavaScript on the client browser (Firefox/Chrome/Safari).
 
 The web page lets you enter the following information:
 
@@ -65,13 +64,13 @@ The web page lets you enter the following information:
 - The IP address of the WebSocket server.
 - The TCP port the server listens on.
 
-I made a workshop on building a simple web server based on Alpine Linux with Nginx and PHP8. Take a look [here](https://github.com/ddella/PHP8-Nginx). The container is only 31Mb. This is the command to start the container in a custom network `frontend`. The subnet is `172.31.10.0/24`.
+I made a workshop on building a simple web server based on Alpine Linux with Nginx and PHP8. Take a look [here](https://github.com/ddella/PHP8-Nginx). The container is only 31Mb. This is the command to start the container in a custom network `frontend`.
 
 ```command
 docker run --rm -d -p 8080:80 -p 8443:443 --name webserver --hostname webserver --domainname example.com --ip 172.31.10.10 --env TZ='EAST+5EDT,M3.2.0/2,M11.1.0/2' --env TIMEZONE='America/New_York' --network frontend  -v $PWD/www/:/www -v $PWD/logs/:/var/log/nginx php8_nginx
 ```
 
-The web server directory, inside the container, is mounted on your local drive in `$PWD/www/`. You will be able to change the HTML/CSS/JavaScript file without needing to restart the web server. I also mounted a local directory for the logs, in case you need to troubleshoot 😉.
+The web server directory, inside the container, is mounted on your local drive in `$PWD/www/`. You will be able to change the HTML/CSS/JavaScript files without needing to restart the web server. I also mounted a local directory for the web server logs, in case you need to troubleshoot 😉.
 
 If everything works as expected, you should have a web server in a Docker container that you can reach with your favourite browser with the url `http://localhost:8080`.
 
@@ -79,7 +78,7 @@ If everything works as expected, you should have a web server in a Docker contai
 
 ## Step 3 — WebSocket Server
 
-The WebSocket server runs on Python. I built a Python Docker container based on Alpine Linux 3.15. The image is only 55.6MB. When building the image, only the Python package `websockets` version 10.2 is required.
+The WebSocket server runs on Python. I built a Python Docker container based on Alpine Linux 3.15. The image is only 55.6MB. When building the image, only the Python package `websockets` is required. The server script is outside the container.
 
 I still like to have a `requirements.txt` file to get the package(s) when building a Python container. If you want more Python packages, just add them at the end of the file.
 
@@ -142,15 +141,21 @@ Check the how-to on Mozilla's web site: ![Enable Enterprise Roots](https://suppo
 
 ### CREATE THE PYTHON DOCKER CONTAINER
 
-This container contains the latest version of Python. It is basically a Python interpreter. When you start the container, you specify the `.py` file.
+This container contains the latest version of Python. It is basically a Python interpreter. When you start the container, you specify the server script, the `.py` file, in the command line.
 
-1. Get the Python image from [Docker hub](https://hub.docker.com/_/python/). This is the official image based on Alpine Linux. I wanted to keep the image as small as possible.
+1. Open a `terminal` and change directory to `$PWD/Python-Docker`.
+
+```command
+cd Python-Docker
+```
+
+2. Get the Python image from [Docker hub](https://hub.docker.com/_/python/). This is the official image based on Alpine Linux. I wanted to keep the image as small as possible.
 
 ```command
 docker pull python:alpine3.15
 ```
 
-2. Create a file named `Dockefile`.
+3. Create a file named `Dockefile`, with the following.
 
 ```docker
 FROM python:alpine3.15
@@ -159,21 +164,29 @@ COPY requirements.txt ./
 RUN pip3 install --no-cache-dir -r requirements.txt
 ```
 
-3. Build the Docker image
+4. Build the Docker image
 
 Make sure you type the command as is. The `.` at the end of the command is important.
 ```command
 docker build -t websocket_server .
 ```
-4. Run WebSocket in Secure mode `wss://`
 
-This command starts the WebSocket server in secure mode `wss://`. It exposes TCP port `9443`. Make sure you have the Python script in the directory `server` as well as the certificate. The mounted directory is readonly, since I will also start a non-secure WebSocket server fron the same script.
+If everything works as expected, you now have a new container called `websocket_server`.
+
+   % docker images
+   REPOSITORY               TAG       IMAGE ID       CREATED         SIZE
+   websocket_server         latest    23ad42770a82   1 minute ago    55.6MB
+
+
+5. Run a WebSocket server in Secure mode `wss://`
+
+This command starts the WebSocket server in secure mode `wss://`. It exposes TCP port `9443`. Make sure you have the Python script in the directory `server` as well as the certificate. The mounted directory is readonly, since I will also start a non-secure WebSocket server from the same script.
 
 ```command
 docker run -it --rm --name wss --hostname wss --domainname example.com --ip 172.31.10.20 -p 9443:9443 --network frontend --mount type=bind,source="$(pwd)"/server,target=/usr/src/myapp,readonly -w /usr/src/myapp websocket_server python secure_ws.py 172.31.10.20 9443 websocket.pem
 ```
 
-5. Run WebSocket in non-secure mode `ws://`
+6. Run a WebSocket server in non-secure mode `ws://`
 
 This command starts the WebSocket server in non-secure mode `ws://`. It exposes TCP port `9080`.
 
@@ -185,7 +198,7 @@ docker run -it --rm --name ws --hostname ws --domainname example.com --ip 172.31
 
 ## Step 4 — Test the WebSocket Server
 
-Start your browser, type this url `localhost:8080`, fill the information and press `connect`. Type a message in the `input message box` and hit the button `Send Message`, if Successful, the server will send the message back in the box below. If the connect button is greyed out, it worked !
+Start your browser, type this url `localhost:8080`, fill the information and press `connect`. Type a message in the `input message box` and hit the button `Send Message`, if successful, the server will send the message back in the box below. If the connect button is greyed out, it worked !
 
 ![Successful connection](images/connected.png "Success")
 
@@ -222,6 +235,7 @@ docker rm -f webserver
 - [Python websockets module](https://websockets.readthedocs.io/en/stable/index.html)
 - [Manos Pithikos Python WebSocket server](https://github.com/Pithikos/python-websocket-server)
 - [Writing WebSocket client applications](https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API/Writing_WebSocket_client_applications)
+- [Writing WebSocket servers](https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API/Writing_WebSocket_servers)
 
 ## License
 
