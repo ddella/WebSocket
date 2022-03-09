@@ -203,6 +203,14 @@ Start your browser, type this url `localhost:8080`, fill the information and pre
 
 ![Successful connection](images/connected.png "Success")
 
+## Step 5 — Test the WebSocket Server (Bootstrap)
+
+This is a version with [Bootstrap](https://getbootstrap.com/). It has the same functionality as the basic `HTML` client.
+
+Start your browser, type this url `localhost:8080/wsclient2.html`, fill the information and press `connect`. Type a message in the `Message to server` and hit the button `Send Message`, if successful, the server will send the message back in the box `Message from server`.
+
+![Successful connection](images/bootstrap.png "Success")
+
 ## TEST THE CERTIFICATE
 
 In case you run into problem with the secure WebSocket, you can use the commands below to check whether the certificate is valid, trusted, and complete.
