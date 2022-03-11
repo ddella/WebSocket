@@ -14,7 +14,7 @@ function onConnectClick() {
 }
 function onDisconnectClick() {
    webSocket.close();
-   document.getElementById("incomingMsgOutput").value = "";
+   // document.getElementById("incomingMsgOutput").value = "";
    console.log(document.getElementById("alert_connection").className);
 }
 
@@ -61,6 +61,9 @@ function openWSConnection(protocol, hostname, port, endpoint) {
    onSpinner();
    try {
         webSocket = new WebSocket(webSocketURL);
+        // Change binary type from "blob" to "arraybuffer"
+        webSocket.binaryType = "arraybuffer";
+
         webSocket.onopen = function(openEvent) {
             console.log("WebSocket OPEN: " + JSON.stringify(openEvent, null, 4));
             document.getElementById("alert_connection").classList.remove("alert-danger");
@@ -92,13 +95,28 @@ function openWSConnection(protocol, hostname, port, endpoint) {
             offSpinner();
         };
         webSocket.onmessage = function (messageEvent) {
-            var wsMsg = messageEvent.data;
-            console.log("WebSocket MESSAGE: " + wsMsg);
-            if (wsMsg.indexOf("error") > 0) {
-                document.getElementById("incomingMsgOutput").value += "error: " + wsMsg.error + "\r\n";
-            } else {
-                document.getElementById("incomingMsgOutput").value += "Rx: " + wsMsg + "\r\n";
-            }
+            let wsMsg = messageEvent.data;
+            if(wsMsg instanceof ArrayBuffer) {
+               // binary frame
+               const view = new DataView(wsMsg);
+               // view can be empty???
+               if (view) {
+                  console.log("Binary data of length: " + view.byteLength);
+                  let strByte = "";
+                  // print no more than 10 bytes
+                  for (let i = 0; i < view.byteLength && i < 10; i++) {
+                     strByte += view.getUint8(i) + ", ";
+                  }
+                  strByte = strByte.slice(0, - 2); // remove the last ", " from the string
+                  document.getElementById("incomingMsgOutput").value += "BIN->Rx: " + strByte + "\r\n";   
+               } else {
+                  console.log("WebSocket BINARY packet was empty!");
+               }
+           } else {
+               // text frame
+               console.log(wsMsg);
+               document.getElementById("incomingMsgOutput").value += "TXT->Rx: " + wsMsg + "\r\n";
+           }
         };
    } catch (exception) {
       console.error("webSocket fatal console.error();: " + exception);
