@@ -243,8 +243,7 @@ docker rm -f webserver
 - [WebSocket Client frontend](https://www.pegaxchange.com/2018/03/23/websocket-client/)
 - [Python websockets module](https://websockets.readthedocs.io/en/stable/index.html)
 - [Manos Pithikos Python WebSocket server](https://github.com/Pithikos/python-websocket-server)
-- [Writing WebSocket client applications](https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API/Writing_WebSocket_client_applications)
-- [Writing WebSocket servers](https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API/Writing_WebSocket_servers)
+- [WebSocket API](https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API)
 
 ## License
 

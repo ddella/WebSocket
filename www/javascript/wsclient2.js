@@ -56,6 +56,17 @@ addEventListener('unload', (event) => {
  */
 function openWSConnection(protocol, hostname, port, endpoint) {
    var webSocketURL = null;
+
+   endpoint = endpoint.replace(/^\/+|\/+$/g, '');
+   // remove leading '/'. Doesn't remove multiple ones.
+   // if (endpoint.charAt(0) === "/") {
+      // endpoint = endpoint.substr(1);
+   // }
+   // remove trailing '/'. Doesn't remove multiple ones.
+   // if (endpoint.charAt(endpoint.length - 1) === "/") {
+      // endpoint = endpoint.substr(0, endpoint.length - 1);
+   // }
+
    webSocketURL = protocol + hostname + ":" + port + "/" + endpoint;
    console.log("openWSConnection::Connecting to: " + webSocketURL);
    onSpinner();
@@ -99,7 +110,7 @@ function openWSConnection(protocol, hostname, port, endpoint) {
             if(wsMsg instanceof ArrayBuffer) {
                // binary frame
                const view = new DataView(wsMsg);
-               // view can be empty???
+               // 'view' can be empty???
                if (view) {
                   console.log("Binary data of length: " + view.byteLength);
                   let strByte = "";
@@ -112,10 +123,12 @@ function openWSConnection(protocol, hostname, port, endpoint) {
                } else {
                   console.log("WebSocket BINARY packet was empty!");
                }
-           } else {
+           } else if (typeof wsMsg === 'string') {
                // text frame
                console.log(wsMsg);
                document.getElementById("incomingMsgOutput").value += "TXT->Rx: " + wsMsg + "\r\n";
+           } else {
+            console.log("WebSocket unknown packet type: " + typeof wsMsg);
            }
         };
    } catch (exception) {
@@ -149,4 +162,14 @@ function onSendClick() {
    }
    var msg = document.getElementById("inputMessage").value;
    webSocket.send(msg);
+}
+
+/**
+ * Clear messages received from server
+ */
+function onClearMessage() {
+   document.getElementById("incomingMsgOutput").value = "";
+}
+function validate(){
+   console.log("validate() called");
 }

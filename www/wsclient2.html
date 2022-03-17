@@ -116,8 +116,16 @@
         <!-- Receive Message input -->
         <div class="container">
           <div class="row g-2 col-6">
-             <label for="exampleFormControlTextarea1" class="form-label">Message from server</label>
-             <textarea class="form-control" id="incomingMsgOutput" rows="5" readonly></textarea>
+            <div class="form-outline">
+             <!-- <label class="form-label">Message from server</label> -->
+             <textarea class="form-control" onchange="validate()" id="incomingMsgOutput" rows="5" style="overflow:auto;" placeholder="Messages from server..." ></textarea>
+            </div>
+          </div>
+          <br>
+          <div class="col-auto">
+            <button class="btn btn-primary" id="btnClearMsg" type="button" onclick="onClearMessage()">
+               Clear messages
+            </button>
           </div>
         </div>
 
