@@ -205,9 +205,8 @@ docker run -it --rm --name wss --hostname wss --domainname example.com --ip 172.
 
 3. Install Node JS modules.
 
-This command starts the WebSocket server container and opens a shell. We need to install some packages before starting the server. The modules installed in the container will be permanent because the container maps it's `/run` directory on your local drive. The modules should be installed in `$PWD/server/node_modules`. If you terminate and restart the container in the same `$PWD` all modules will already be installed.
+This command starts the WebSocket server container and opens a shell. We need to install some packages before starting the server. The modules installed in the container will be permanent because the container maps it's `/run` directory on your local drive. The modules should be installed in `$PWD/server/node_modules`. If you terminate and restart the container in the same `$PWD`, all modules will be available.
 
-Install the WebSocket module
 ```command
 # install the WebSocket module
 npm install --save-dev ws
