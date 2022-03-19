@@ -1,0 +1,24 @@
+{
+  "name": "npm_start",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node .",
+    "dev": "nodemon ."
+  },
+  "keywords": [],
+  "author": "Daniel Della-Noce",
+  "license": "ISC",
+  "devDependencies": {
+    "bufferutil": "^4.0.6",
+    "http": "^0.0.1-security",
+    "https": "^1.0.0",
+    "nodemon": "^2.0.15",
+    "url": "^0.11.0",
+    "utf-8-validate": "^5.0.9",
+    "ws": "^8.5.0"
+  }
+}

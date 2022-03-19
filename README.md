@@ -19,7 +19,14 @@ The WebSocket Protocol enables bi-directional, full duplex communications protoc
 
 The client is the browser with a simple JavaScript that will initiate the WebSocket. It could be either `ws://`, which is the equivalent to `http://`, or secure WebSocket `wss://`, which is the equivalent to `https://`. In this workshop, I implemented both secure and non-secure WebSocket server. I took the code for the frontend, HTML and JavaScript, [here](https://www.pegaxchange.com/2018/03/23/websocket-client/).
 
-The server portion is implemented in Python. You can use any programming language for the server side (PHP, Go, NodeJS, ...). I took the code from Manos Pithikos. Check his GitHub page [here](https://github.com/Pithikos/python-websocket-server).
+The server portion is implemented in Node JS. You can use any programming language for the server side (PHP, Go, Python, ...). I took the code from Luigi Pinca and made some small modification. Check the GitHub page [here](https://github.com/websockets/ws).
+
+The WebSocket server accepts different `endpoint`. The `endpoint` is the `pathname` in the URL.
+
+1. `wss://hostname:port/`
+2. `wss://hostname:port/**foo**`
+3. `wss://hostname:port/**bar**`
+4. `wss://hostname:port/**rtt**`
 
 ### Architecture
 
@@ -31,10 +38,8 @@ docker network create --driver=bridge --subnet=172.31.10.0/24 --ip-range=172.31.
 
 The Docker containers expose the following TCP ports on the Docker host:
 
-- Nginx Web Server **http://** on `TCP/8080`.
-- Nginx Web Server **https://** on `TCP/8443`.
-- WebSocket Server **ws://** on `TCP/9080`.
-- WebSocket Server **wss://** on `TCP/9443`.
+- One Nginx Web Server with **http://** on `TCP/8080` and **https://** on `TCP/8443`.
+- One WebSocket Server with **ws://** on `TCP/6080` and **wss://** on `TCP/6443`.
 
 ![WebSocket Architecture](images/architecture.jpg "Architecture")
 
@@ -43,7 +48,6 @@ The Docker containers expose the following TCP ports on the Docker host:
 Before you begin with this workshop, you'll need basic understanding of the following technologies:
 
 - Familiarity with [Docker](https://www.docker.com/).
-- Familiarity with [Python](https://www.python.org/).
 - Familiarity with [JavaScript](https://www.w3schools.com/js/default.asp).
 - Familiarity with [WebSockets - RFC6455](https://datatracker.ietf.org/doc/html/rfc6455).
 
@@ -60,11 +64,12 @@ cd WebSocket
 
 You need a web server to present a web page for the users to enter all the parameters needed to create the WebSocket. The magic to create the TCP connection is done within the JavaScript on the client browser (Firefox/Chrome/Safari).
 
-The web page lets you enter the following information:
+The web page lets you enter the following information to create the WebSocket connection:
 
-- Choose between WebSocket `ws://` or secure WebSocket `wss://` connection.
-- The IP address of the WebSocket server.
+- The hostname/IP address of the WebSocket server.
 - The TCP port the server listens on.
+- The endpoint (optional).
+- The WebSocket protocol, either non-secure `ws://` or secure `wss://` connection.
 
 I made a workshop on building a simple web server based on Alpine Linux with Nginx and PHP8. Take a look [here](https://github.com/ddella/PHP8-Nginx). The container is only 31Mb. This is the command to start the container in a custom network `frontend`.
 
@@ -80,12 +85,12 @@ If everything works as expected, you should have a web server in a Docker contai
 
 ## Step 3 — WebSocket Server
 
-The WebSocket server runs on Python. I built a Python Docker container based on Alpine Linux 3.15. The image is only 55.6MB. When building the image, only the Python package `websockets` is required. The server script is outside the container.
+The WebSocket server runs on Node JS. I used Docker container based on Alpine Linux 3.15 and Node JS 16.14. The image is only 168MB.
 
-I still like to have a `requirements.txt` file to get the package(s) when building a Python container. If you want more Python packages, just add them at the end of the file.
+To pull the Node JS image based on Alpine Linux, execute the following command:
 
-```txt
-websockets==10.2
+```Docker
+docker pull node:current-alpine
 ```
 
 ### CREATE THE CERTIFICATE FOR SECURE WEBSOCKET `wss://`
@@ -100,12 +105,11 @@ openssl req -x509 -new -nodes -key ssl/websocket_rootCA.key -sha256 -days 3650 -
 openssl genrsa -out ssl/websocket.key 4096
 openssl req -new -key ssl/websocket.key -out ssl/websocket.csr -config ssl/websocket.cnf -extensions v3_req
 openssl x509 -req -in ssl/websocket.csr -CA ssl/websocket_rootCA.crt -CAkey ssl/websocket_rootCA.key -CAcreateserial -out ssl/websocket.crt -days 3650 -sha256 -extfile ssl/websocket.cnf -extensions v3_req
-cat ssl/websocket.crt ssl/websocket.key > server/websocket.pem
 ```
 
-The file `websocket.pem` is your self-signed certificate. It needs to be marked as **trusted for this account** in your OS.
+The file `websocket.crt` is your self-signed certificate. It needs to be marked as **trusted for this account** in your OS.
 
-1. In the case of macOS, open the file `server/websocket.pem` in KeyChain. Right click -> Open With -> KeyChain Access (default)
+1. In the case of macOS, open the file `ssl/websocket.pem` in KeyChain. Right click -> Open With -> KeyChain Access (default)
 
 ![untrusted new certificate](images/keychain1.png)
 
@@ -141,67 +145,71 @@ If you use **Firefox**, you might get the error `SEC_ERROR_UNKNOWN_ISSUER`. It c
 
 Check the how-to on Mozilla's web site: ![Enable Enterprise Roots](https://support.mozilla.org/en-US/kb/how-disable-enterprise-roots-preference/)
 
-### CREATE THE PYTHON DOCKER CONTAINER
+### CREATE THE NODE JS DOCKER CONTAINER
 
-This container contains the latest version of Python. It is basically a Python interpreter. When you start the container, you specify the server script, the `.py` file, in the command line.
+This container has the latest version of Node JS.
 
-1. Open a `terminal` and change directory to `$PWD/Python-Docker`.
-
-```command
-cd Python-Docker
-```
-
-2. Get the Python image from [Docker hub](https://hub.docker.com/_/python/). This is the official image based on Alpine Linux. I wanted to keep the image as small as possible.
+1. Open a `terminal` and change directory to `$PWD/server`.
 
 ```command
-docker pull python:alpine3.15
+cd server
 ```
 
-3. Create a file named `Dockefile`, with the following.
+2. Run a WebSocket server
 
-```docker
-FROM python:alpine3.15
-WORKDIR /usr/src/app
-COPY requirements.txt ./
-RUN pip3 install --no-cache-dir -r requirements.txt
-```
-
-4. Build the Docker image
-
-Make sure you type the command as is. The `.` at the end of the command is important.
-```command
-docker build -t websocket_server .
-```
-
-If everything works as expected, you now have a new container called `websocket_server`.
-
-      % docker images
-      REPOSITORY               TAG       IMAGE ID       CREATED         SIZE
-      websocket_server         latest    23ad42770a82   1 minute ago    55.6MB
-
-5. Run a WebSocket server in Secure mode `wss://`
-
-This command starts the WebSocket server in secure mode `wss://`. It exposes TCP port `9443`. Make sure you have the Python script in the directory `server` as well as the certificate. The mounted directory is readonly, since I will also start a non-secure WebSocket server from the same script.
+This command starts the two WebSocket server. One in non-secure mode, `ws://`, and one in secure mode, `wss://`. It exposes TCP port `9080` and `9443`.
 
 ```command
-docker run -it --rm --name wss --hostname wss --domainname example.com --ip 172.31.10.20 -p 9443:9443 --network frontend --mount type=bind,source="$(pwd)"/server,target=/usr/src/myapp,readonly -w /usr/src/myapp websocket_server python secure_ws.py 172.31.10.20 9443 websocket.pem
+docker run -it --rm --name wss --hostname wss --domainname example.com --ip 172.31.10.20 -p 9443:6443 -p 9080:6080 -v $PWD/:/run -w /run --network frontend node:17-alpine npm run dev
 ```
-
-6. Run a WebSocket server in non-secure mode `ws://`
-
-This command starts the WebSocket server in non-secure mode `ws://`. It exposes TCP port `9080`.
-
-```command
-docker run -it --rm --name ws --hostname ws --domainname example.com --ip 172.31.10.21 -p 9080:9080 --network frontend --mount type=bind,source="$(pwd)"/server,target=/usr/src/myapp,readonly -w /usr/src/myapp websocket_server python secure_ws.py 172.31.10.21 9080
-```
-
->You can start both `ws://` and `wss://` servers since they listen on different TCP port and the mounted directory is readonly. It's the same Python script, I just did a small hack so if you don't supply a certificate it starts in non-secure mode.
 
 ## Step 4 — Test the WebSocket Server
 
-Start your browser, type this url `localhost:8080`, fill the information and press `connect`. Type a message in the `input message box` and hit the button `Send Message`, if successful, the server will send the message back in the box below. If the connect button is greyed out, it worked !
+### Test via the web server
+
+The WebSocket client is a web page with a JavaScript.
+
+Start your browser, type this url `localhost:8080`, fill the information and press `connect`. Type a message in the `input message box` and hit the button `Send Message`, if successful, the server will send the message back in the box below.
+
+Try with different `endpoint`.
+/foo
+/bar
+/
+/rtt
 
 ![Successful connection](images/connected.png "Success")
+
+### Test via a Node JS client application script
+
+1. Open a `terminal` and change directory to `$PWD/server`.
+
+```command
+cd server
+```
+
+2. Run the client from the command line.
+
+For `non secure` WebSocket:
+
+```command
+ node client-rtt.js 0 9080
+```
+
+For `secure` WebSocket:
+
+```command
+ node client-rtt.js 1 9443
+```
+
+The client just sends the time, in `ms`, to the server and waits for the server to send the time back. It calculates the round-trip time and prints it. The server has been built to close the WebSocket after.
+
+The output of the client should be:
+
+```txt
+connected
+Round-Trip Time: 2 ms
+disconnected
+```
 
 ## Step 5 — Test the WebSocket Server (Bootstrap)
 
