@@ -33,9 +33,20 @@ import * as http from 'http'; //ES 6
 import * as https from 'https'; //ES 6
 import { readFileSync } from 'fs';
 import { WebSocketServer } from 'ws';
+import { log } from 'console';
 
-const WS_PORT  = 6080;
-const WSS_PORT = 6443;
+let WS_PORT  = 6080;
+let WSS_PORT = 6443;
+
+if (process.env.WS_PORT) {
+  WS_PORT = process.env.WS_PORT;
+}
+
+if (process.env.WSS_PORT) {
+  WSS_PORT = process.env.WSS_PORT;
+}
+console.log('Env WS_PORT: ' + process.env.WS_PORT + ' WS_PORT: ' + WS_PORT);
+console.log('Env WSS_PORT: ' + process.env.WSS_PORT + ' WSS_PORT: ' + WSS_PORT);
 
 const options = {
   cert: readFileSync('ssl/websocket.crt'),

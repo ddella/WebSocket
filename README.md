@@ -234,6 +234,12 @@ This command starts one WebSocket server with two listening ports, one for non-s
 docker run -it --rm --name wss --hostname wss --domainname example.com --ip 172.31.10.20 -p 9443:6443 -p 9080:6080 -v $PWD/:/run -w /run --network frontend node:current-alpine npm run dev
 ```
 
+>If you want to map other TCP ports, you can pass then as environement variable to the Docker container.
+
+>```Docker
+docker run -it --rm --name wss --hostname wss --domainname example.com --ip 172.31.10.20 -p 9443:443 -p 9080:80 -v $PWD/:/run -w /run --network frontend --env WS_PORT=80 --env WSS_PORT=443 node:current-alpine npm run dev
+```
+
 ## Step 4 — Test the WebSocket Server
 
 ### Test via the web server
@@ -258,11 +264,6 @@ Start a connection to the WebSocket server by using client browser. The web serv
 The command line client initiate a connection to the server. The client just sends the time, in `ms`, to the server and waits for the server to send the time back. It calculates the round-trip time and prints it. The server has been built to close the WebSocket after sending the time.
 
 You need to have Node JS installed locally, if you don't or don't want to install it, just run the script from another Node JS Docker container.
-
->It needs two arguments:  
->1. [0|1]: 0 = `non secure` and 1 = `secure`  
->2. The TCP port.  
->The host is `localhost`. I didn't want to over complicated the client 😁
 
 1. Open a `terminal` and change the directory to `$PWD/server`.
 
