@@ -35,20 +35,22 @@ The WebSocket server accepts different `endpoint`. The `endpoint` is the `path` 
 3. `ws[s]://hostname:port/bar`
 4. `ws[s]://hostname:port/rtt`
 
-> The `ws[s]://hostname:port/rtt` make sense only with the Node JS client script. It nakes no sense with the browser 😉
+> The URL `ws[s]://hostname:port/rtt` makes sense only with the Node JS client script 😉.
 
 ### Architecture
 
-All the containers run on the same _Docker custom network_. This workshop is not about _Docker custom network_ but I encourage you to run your containers in custom network to get the added value of a DNS server. The following command was used to create the `frontend` network.
+The workshop includes two servers, each in a Docker container on a _Docker custom network_.
 
-```command
-docker network create --driver=bridge --subnet=172.31.10.0/24 --ip-range=172.31.10.128/25 --gateway=172.31.10.1 frontend
-```
+- Nginx web server with **http://** on `TCP/8080` and **https://** on `TCP/8443`.
+- Node JS WebSocket with **ws://** on `TCP/6080` and **wss://** on `TCP/6443`.
 
-The Docker containers expose the following TCP ports on the Docker host:
+The Nginx web server hosts a standard HTML page to enter the information needed to establish a WebSocket connection. The other server is the Node JS WebSocket server.
 
-- One Nginx Web Server with **http://** on `TCP/8080` and **https://** on `TCP/8443`.
-- One WebSocket Server with **ws://** on `TCP/6080` and **wss://** on `TCP/6443`.
+>All the containers run on the same _Docker custom network_. This workshop is not about _Docker custom network_ but I encourage you to run your containers in custom network to get the added value of a DNS server. The following command was used to create the `frontend` network.
+>
+>```command
+>docker network create --driver=bridge --subnet=172.31.10.0/24 --ip-range=172.31.10.128/25 --gateway=172.31.10.1 frontend
+>```
 
 ![WebSocket Architecture](images/architecture.jpg "Architecture")
 
@@ -57,7 +59,8 @@ The Docker containers expose the following TCP ports on the Docker host:
 Before you begin with this workshop, you'll need basic understanding of the following technologies:
 
 - Familiarity with [Docker](https://www.docker.com/).
-- Familiarity with [JavaScript](https://www.w3schools.com/js/default.asp).
+- Familiarity with [JavaScript](https://www.w3schools.com/js/).
+- Familiarity with [Node JS](https://www.w3schools.com/nodejs/).
 - Familiarity with [WebSockets - RFC6455](https://datatracker.ietf.org/doc/html/rfc6455).
 
 ## Step 1 - Clone all the files
@@ -71,9 +74,9 @@ cd WebSocket
 
 ## Step 2 — Web Server
 
-You need a web server to present a web page for the users to enter all the parameters needed to create the WebSocket. The magic to create the TCP connection is done within the JavaScript on the client browser (Firefox/Chrome/Safari).
+You need a web server to present a web page for the users to enter all the parameters needed to create the WebSocket session. The magic to create the TCP connection is done within the JavaScript on the client browser. Most modern browser support WebSocket.
 
-The web page lets you enter the following information to create the WebSocket connection:
+The web page lets you enter the following information to create the WebSocket session:
 
 - The hostname/IP address of the WebSocket server.
 - The TCP port the server listens on.
@@ -94,9 +97,9 @@ If everything works as expected, you should have a web server in a Docker contai
 
 ## Step 3 — WebSocket Server
 
-The WebSocket server runs on Node JS. I used Docker container based on Alpine Linux 3.15 and Node JS 16.14. The image is only 168MB.
+The WebSocket server runs on Node JS. I used Docker container based on Alpine Linux 3.15 and Node JS 16.14. The image is only 168MB. You don't need to build the image, just pull it from Docker hub.
 
-To pull the Node JS image based on Alpine Linux, execute the following command:
+Pull the Node JS image:
 
 ```Docker
 docker pull node:current-alpine
@@ -104,9 +107,9 @@ docker pull node:current-alpine
 
 ### CREATE THE CERTIFICATE FOR SECURE WEBSOCKET `wss://`
 
-Secure WebSocket requires a standard `SSL/TLS` certificate, the same way as `https`. In this workshop, we'll use a **self-signed** certificate. The tricky part is to have this self-signed certificate being accepted by Firefox/Chrome/Safari. This is the part that I struggled the most. Troubleshooting self-signed certificate can be hard 😀.
+Secure WebSocket requires a standard `SSL/TLS` certificate, the same way as `https` do. In this workshop, we'll use a **self-signed** certificate. The tricky part is to have this self-signed certificate being accepted by your browser. This is the tricky part in this workshop. It will depend on the browser and operating system. Troubleshooting self-signed certificate can be hard 😀.
 
-If you're on a Linux or macOS, use `openssl`. Just type the following commands to generate the self-signed certificate.
+If you're on a Linux or macOS, use `openssl` to create the certificate. Just type the following commands to generate the self-signed certificate.
 
 ```command
 openssl genrsa -out ssl/websocket_rootCA.key 4096
@@ -154,7 +157,7 @@ If you use **Firefox**, you might get the error `SEC_ERROR_UNKNOWN_ISSUER`. It c
 
 Check the how-to on Mozilla's web site: ![Enable Enterprise Roots](https://support.mozilla.org/en-US/kb/how-disable-enterprise-roots-preference/)
 
-### CREATE THE NODE JS DOCKER CONTAINER
+### START THE WEBSOCKET SERVER
 
 This container has the latest version of Node JS.
 
@@ -164,9 +167,12 @@ This container has the latest version of Node JS.
 cd server
 ```
 
-2. Run a WebSocket server
+2. Start the WebSocket server.
 
-This command starts the two WebSocket server. One in non-secure mode, `ws://`, and one in secure mode, `wss://`. It exposes TCP port `9080` and `9443`.
+This command starts one WebSocket server with two listening ports, one for non-secure mode, `ws://`, and one for secure mode, `wss://`.
+>The Node JS server listen on both TCP port `6080` and `6443`.
+>>The Docker host maps TCP port `9080` to `6080`.
+>>The Docker host maps TCP port `9443` to `6443`.
 
 ```command
 docker run -it --rm --name wss --hostname wss --domainname example.com --ip 172.31.10.20 -p 9443:6443 -p 9080:6080 -v $PWD/:/run -w /run --network frontend node:17-alpine npm run dev
