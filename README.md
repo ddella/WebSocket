@@ -6,27 +6,36 @@
 This workshop is about building a client and server WebSocket on different Docker containers.
 
 - Web Server on Nginx, that will host the JavaScript (the Client)
-- Secure WebSocket Server in Python (the Server)
-- Non-Secure WebSocket Server in Python (the Server)
+- Secure and Non-Secure WebSocket Server in Node JS (the Server)
 
 The WebSocket Protocol enables bi-directional, full duplex communications protocol between a client and a server. It provides a persistent connection between them and both parties can sending data at any time. It is commonly used in modern web applications for streaming data and other asynchronous traffic. The goal of this technology is to provide a mechanism for browser-based applications that need two-way communication with servers without the need to open multiple HTTP connections.
 
 <a title="Brivadeneira, CC BY-SA 4.0 &lt;https://creativecommons.org/licenses/by-sa/4.0&gt;, via Wikimedia Commons" href="https://commons.wikimedia.org/wiki/File:Websocket_connection.png"><img width="256" alt="Websocket connection" src="https://upload.wikimedia.org/wikipedia/commons/1/10/Websocket_connection.png"></a>
 
 >The WebSocket specification defines two URI schemes:   
->ws-URI = "ws:" "//" host [ ":" port ] path [ "?" query ]   
->wss-URI = "wss:" "//" host [ ":" port ] path [ "?" query ]   
+>ws-URI = "ws:" "//" host [ ":" port ] "/" [path [ "?" query ]] (ws://websocket.example.com:6080/foo)  
+>wss-URI = "wss:" "//" host [ ":" port ] "/" [path [ "?" query ]] (wss://websocket.example.com:6443/foo)  
 
-The client is the browser with a simple JavaScript that will initiate the WebSocket. It could be either `ws://`, which is the equivalent to `http://`, or secure WebSocket `wss://`, which is the equivalent to `https://`. In this workshop, I implemented both secure and non-secure WebSocket server. I took the code for the frontend, HTML and JavaScript, [here](https://www.pegaxchange.com/2018/03/23/websocket-client/).
+In this workshop, I've 
 
-The server portion is implemented in Node JS. You can use any programming language for the server side (PHP, Go, Python, ...). I took the code from Luigi Pinca and made some small modification. Check the GitHub page [here](https://github.com/websockets/ws).
+1. Client - Web Broswer:
+The client is a JavaScript running on the browser. It will initiate the WebSocket connection. The JavaScript client implements both secure and non-secure WebSocket communication. I took the code for the frontend, HTML and JavaScript, [here](https://www.pegaxchange.com/2018/03/23/websocket-client/).
 
-The WebSocket server accepts different `endpoint`. The `endpoint` is the `pathname` in the URL.
+2. Client - Node JS:
+The client is a simple Node JS script. In this workshop, I implemented a simple script to get the round trip time of the connection.
 
-1. `wss://hostname:port/`
-2. `wss://hostname:port/**foo**`
-3. `wss://hostname:port/**bar**`
-4. `wss://hostname:port/**rtt**`
+3. Server - Node JS:
+
+The server portion is implemented in Node JS. You can use any programming language for the server side like PHP, Go, Python, ... I took the code from the official Node JS librairy and made some small modification. Check the GitHub page [here](https://github.com/websockets/ws).
+
+The WebSocket server accepts different `endpoint`. The `endpoint` is the `path` in the URL. See below the valid `path`. Anything outside of that will be rejected by the server and the connection will be terminated. All of the request can be made in secure or non-secure mode.
+
+1. `ws[s]://hostname:port/`
+2. `ws[s]://hostname:port/foo`
+3. `ws[s]://hostname:port/bar`
+4. `ws[s]://hostname:port/rtt`
+
+> The `ws[s]://hostname:port/rtt` make sense only with the Node JS client script. It nakes no sense with the browser 😉
 
 ### Architecture
 
