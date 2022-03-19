@@ -234,9 +234,9 @@ This command starts one WebSocket server with two listening ports, one for non-s
 docker run -it --rm --name wss --hostname wss --domainname example.com --ip 172.31.10.20 -p 9443:6443 -p 9080:6080 -v $PWD/:/run -w /run --network frontend node:current-alpine npm run dev
 ```
 
->If you want to map other TCP ports, you can pass then as environement variable to the Docker container.
+If you want to map other TCP ports, you can pass then as environement variable to the Docker container.
 
->```Docker
+```Docker
 docker run -it --rm --name wss --hostname wss --domainname example.com --ip 172.31.10.20 -p 9443:443 -p 9080:80 -v $PWD/:/run -w /run --network frontend --env WS_PORT=80 --env WSS_PORT=443 node:current-alpine npm run dev
 ```
 
