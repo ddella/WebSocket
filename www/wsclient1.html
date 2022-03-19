@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<!-- https://www.pegaxchange.com/2018/03/23/websocket-client/ -->
+<html>
+   <head>
+      <meta charset="UTF-8">
+      <script src="/javascript/wsclient.js"></script>
+      <meta charset="utf-8">
+      <title>WebSocket Demo</title>
+      <link rel="stylesheet" href="/css/wsclient.css">
+      <link rel="icon" type="image/x-icon" href="/images/websocket.svg">
+   </head>
+    <body>
+        <h1>WebSocket Client</h1>
+        <!-- WebSocket Connection Parameters Table -->
+        <div class="closed" id="status">Not connected</div><br>
+        <table class="table_ws_closed" id="table_ws">
+            <tr>
+                <td width="200px">WS Protocol</td>
+                <td>
+                    <select id="protocol">
+                        <option value="ws">WebSocket (ws://)</option>
+                        <option value="wss" selected="selected">Secure WebSocket (wss://)</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>WS Hostname</td>
+                <td><input type="text" id="hostname"/></td>
+            </tr>
+            <tr>
+                <td>WS Port</td>
+                <td><input type="text" id="port"/></td>
+            </tr>
+            <tr>
+                <td>WS Endpoint</td>
+                <td><input type="text" id="endpoint"/></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>
+                    <input id="btnConnect"    type="button" value="Connect"    onclick="onConnectClick()">&nbsp;&nbsp;
+                    <input id="btnDisconnect" type="button" value="Disconnect" onclick="onDisconnectClick()" disabled="disabled">
+                </td>
+            </tr>
+        </table><br/>
+        <!-- Send Message Table -->
+        <table>
+            <tr>
+                <td width="200px">Message</td>
+                <td><input type="text" id="message" placeholder="Type a message..."/></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>
+                    <input id="btnSend" type="button" value="Send Message" disabled="disabled" onclick="onSendClick()">
+                </td>
+            </tr>
+        </table><br/>
+        <textarea id="incomingMsgOutput" rows="10" cols="20" disabled="disabled"></textarea>
+        <br><br>
+        <p>Check the new page, built with <a href="wsclient2.html" target="_blank" rel="noopener noreferrer">BootStrap</a></p>
+    </body>
+</html>

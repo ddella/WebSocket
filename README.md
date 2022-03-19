@@ -184,15 +184,20 @@ docker run -it --rm --name wss --hostname wss --domainname example.com --ip 172.
 
 ### Test via the web server
 
-The WebSocket client is a web page with a JavaScript.
+Start a connection to the WebSocket server by using client browser. The web server sends a standard HTML page with a JavaScript. It's the JavaScript that will initiate the connection to the WebSocket server.
 
-Start your browser, type this url `localhost:8080`, fill the information and press `connect`. Type a message in the `input message box` and hit the button `Send Message`, if successful, the server will send the message back in the box below.
+1. Start your favorite browser
+2. Type the url `localhost:8080`
+3. Fill the information and press `connect`.
+4. Type a message in the `input message box` and hit the button `Send Message`. If successful, the server will send the message back in the box below.
 
-Try with different `endpoint`.
-/foo
-/bar
-/
-/rtt
+![Successful connection](images/connected.png "Success")
+
+>Those are the different `endpoint` accepted by the server.  
+>>- /foo  
+>>- /bar  
+>>- /  
+>>- /rtt  
 
 ![Successful connection](images/connected.png "Success")
 
