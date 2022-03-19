@@ -53,6 +53,33 @@ The Nginx web server hosts a standard HTML page to enter the information needed 
 
 ![WebSocket Architecture](images/architecture.jpg "Architecture")
 
+### SERVER
+
+The WebSocket server is more or less a web server. It listens on TCP ports `TCP/6080` and `TCP/6443`. The client makes it's first request via HTTP/S asking for a connection upgrade. If the server is a real WebSocket server it will accept the request and upgrade the procotol.
+
+This is a Wireshark packet capture of the request from the client asking to `upgrade` the protocol to WebSocket.
+
+      GET /foo HTTP/1.1
+      Host: 127.0.0.1:6080
+      Connection: Upgrade
+      Pragma: no-cache
+      Cache-Control: no-cache
+      User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.51 Safari/537.36
+      Upgrade: websocket
+      Origin: http://localhost:8080
+      Sec-WebSocket-Version: 13
+      Accept-Encoding: gzip, deflate, br
+      Accept-Language: en-US,en;q=0.9,fr;q=0.8
+      Sec-WebSocket-Key: n6L8hzDkt+MaFqHE3iefTQ==
+      Sec-WebSocket-Extensions: permessage-deflate; client_max_window_bits
+
+This is a Wireshark packet capture of the response from the server that accept the request from the client.
+
+      HTTP/1.1 101 Switching Protocols
+      Upgrade: websocket
+      Connection: Upgrade
+      Sec-WebSocket-Accept: nmT+QYqF1fR7iiYoLneQlU9Vw+I=
+
 ## Prerequisites
 
 Before you begin with this workshop, you'll need basic understanding of the following technologies:
