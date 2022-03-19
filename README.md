@@ -55,7 +55,9 @@ The Nginx web server hosts a standard HTML page to enter the information needed 
 
 ### SERVER
 
-The WebSocket server is more or less a web server. It listens on TCP ports `TCP/6080` and `TCP/6443`. The client makes it's first request via HTTP/S asking for a connection upgrade. If the server is a real WebSocket server it will accept the request and upgrade the procotol.
+The WebSocket server is more or less a web server. It listens on TCP ports `TCP/6080` and `TCP/6443`. The client makes it's first request via HTTP/S asking for a connection upgrade. If the server is a real WebSocket server, it will accept the request and upgrade the procotol.
+
+>The WebSocket server multiplex HTTP protocol and WebSocket protocol on the same port.
 
 This is a Wireshark packet capture of the request from the client asking to `upgrade` the protocol to WebSocket.
 
@@ -193,7 +195,34 @@ This container has the latest version of Node JS.
 cd server
 ```
 
-2. Start the WebSocket server.
+2. Start the WebSocket server with a shell.
+
+This command starts the WebSocket server container and opens a shell. We need to install some packages before starting the server.
+
+```Docker
+docker run -it --rm --name wss --hostname wss --domainname example.com --ip 172.31.10.20 -p 9443:6443 -p 9080:6080 -v $PWD/:/run -w /run --network frontend current-alpine /bin/sh
+```
+
+3. Install Node JS modules.
+
+This command starts the WebSocket server container and opens a shell. We need to install some packages before starting the server.
+
+Install the WebSocket module
+```command
+# install the WebSocket module
+npm install --save-dev ws
+
+# helps develop node.js based applications
+npm install --save-dev nodemon
+
+# masking and unmasking the data payload of the WebSocket frames
+npm install --save-dev bufferutil
+
+# Allows to efficiently check if a message contains valid UTF-8
+npm install --save-dev utf-8-validate
+```
+
+4. Start the WebSocket server.
 
 This command starts one WebSocket server with two listening ports, one for non-secure mode, `ws://`, and one for secure mode, `wss://`.
 >The Node JS server listen on both TCP port `6080` and `6443`.  
@@ -219,7 +248,7 @@ Start a connection to the WebSocket server by using client browser. The web serv
 
 ![Successful connection](images/connected.png "Success")
 
->Those are the different `endpoint` accepted by the server. The endpoint `/rtt` doesn't make sense with the browser as a client.
+>Those are the different `endpoint` accepted by the server. The endpoint `/rtt` does only make sense with the Node JS client.
 >>- /foo  
 >>- /bar  
 >>- /  
@@ -247,13 +276,13 @@ cd server
 For `non secure` WebSocket:
 
 ```command
- node client-rtt.js 0 9080
+node client-rtt.js ws://127.0.0.1:9080
 ```
 
 For `secure` WebSocket:
 
 ```command
- node client-rtt.js 1 9443
+node client-rtt.js wss://127.0.0.1:9443
 ```
 
 The output of the client should be:

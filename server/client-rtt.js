@@ -1,15 +1,37 @@
 /**
- * Calculate the RTT between the client and the server.
+ * Calculate the RTT between a WebSocket client and the server.
+ * 
+ * For a non-secure request:
+ *      node client-rtt.js ws://127.0.0.1:6080
+ * 
+ *  * For a secure request:
+ *      node client-rtt.js wss://127.0.0.1:6443
  */
 import WebSocket from 'ws';
 
-const wss = new WebSocket('wss://localhost:6443/rtt', {
-    // accept self-signed certificate
-    rejectUnauthorized:false,
-    // strictSSL: false
+let wss = null;
+let url = null;
+
+const myArgs = process.argv.slice(2);
+if (myArgs.length != 1) {
+    console.log('usage: node client-rtt.js <URI>');
+    console.log('    example for non-secure: node client-rtt.js ws://127.0.0.1:6080');
+    console.log('    example for secure:     node client-rtt.js wss://127.0.0.1:6443');
+    process.exit(1);
+}
+
+const URI = myArgs[0];
+url = URI + '/rtt';
+
+wss = new WebSocket(url, {
+    rejectUnauthorized:false, // accept self-signed certificate
     }
 );
-// const wss = new WebSocket('ws://localhost:6080/rtt');
+
+wss.on('error', (error) => {
+    console.log(error + ': ' + url);
+    process.exit(1);
+});
 
 wss.on('open', function open() {
   console.log('connected');
