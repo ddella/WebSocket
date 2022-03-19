@@ -45,8 +45,6 @@ if (process.env.WS_PORT) {
 if (process.env.WSS_PORT) {
   WSS_PORT = process.env.WSS_PORT;
 }
-console.log('Env WS_PORT: ' + process.env.WS_PORT + ' WS_PORT: ' + WS_PORT);
-console.log('Env WSS_PORT: ' + process.env.WSS_PORT + ' WSS_PORT: ' + WSS_PORT);
 
 const options = {
   cert: readFileSync('ssl/websocket.crt'),
