@@ -176,8 +176,8 @@ This command starts one WebSocket server with two listening ports, one for non-s
 
 ![Port Mapping](images/port_mapping.jpg "Port Mapping")
 
-```command
-docker run -it --rm --name wss --hostname wss --domainname example.com --ip 172.31.10.20 -p 9443:6443 -p 9080:6080 -v $PWD/:/run -w /run --network frontend node:17-alpine npm run dev
+```Docker
+docker run -it --rm --name wss --hostname wss --domainname example.com --ip 172.31.10.20 -p 9443:6443 -p 9080:6080 -v $PWD/:/run -w /run --network frontend current-alpine npm run dev
 ```
 
 ## Step 4 — Test the WebSocket Server
