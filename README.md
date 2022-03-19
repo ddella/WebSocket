@@ -1,5 +1,4 @@
-﻿
-# WebSocket Client Server
+﻿# WebSocket Client Server
 
 ### Introduction
 
@@ -193,17 +192,24 @@ Start a connection to the WebSocket server by using client browser. The web serv
 
 ![Successful connection](images/connected.png "Success")
 
->Those are the different `endpoint` accepted by the server.  
+>Those are the different `endpoint` accepted by the server. The endpoint `/rtt` doesn't make sense with the browser as a client.
 >>- /foo  
 >>- /bar  
 >>- /  
 >>- /rtt  
 
-![Successful connection](images/connected.png "Success")
-
 ### Test via a Node JS client application script
 
-1. Open a `terminal` and change directory to `$PWD/server`.
+The command line client initiate a connection to the server. The client just sends the time, in `ms`, to the server and waits for the server to send the time back. It calculates the round-trip time and prints it. The server has been built to close the WebSocket after sending the time.
+
+You need to have Node JS installed locally, if you don't or don't want to install it, just run the script from another Node JS Docker container.
+
+>It needs two arguments:  
+>1. [0|1]: 0 = `non secure` and 1 = `secure`  
+>2. The TCP port.  
+>The host is `localhost`. I didn't want to over complicated the client 😁
+
+1. Open a `terminal` and change the directory to `$PWD/server`.
 
 ```command
 cd server
@@ -223,8 +229,6 @@ For `secure` WebSocket:
  node client-rtt.js 1 9443
 ```
 
-The client just sends the time, in `ms`, to the server and waits for the server to send the time back. It calculates the round-trip time and prints it. The server has been built to close the WebSocket after.
-
 The output of the client should be:
 
 ```txt
@@ -233,15 +237,7 @@ Round-Trip Time: 2 ms
 disconnected
 ```
 
-## Step 5 — Test the WebSocket Server (Bootstrap)
-
-This is a version with [Bootstrap](https://getbootstrap.com/). It has the same functionality as the basic `HTML` client.
-
-Start your browser, type this url `localhost:8080/wsclient2.html`, fill the information and press `connect`. Type a message in the `Message to server` and hit the button `Send Message`, if successful, the server will send the message back in the box `Message from server`.
-
-![Successful connection](images/bootstrap.png "Success")
-
-## TEST THE CERTIFICATE
+## TEST THE CERTIFICATE (OPTINAL)
 
 In case you run into problem with the secure WebSocket, you can use the commands below to check whether the certificate is valid, trusted, and complete.
 Open a `terminal` window.
@@ -260,7 +256,7 @@ curl -kvI https://127.0.0.1:9443
 
 ## Clean up
 
-When you're done, it's always a good idea to clean everything. If you followed all the steps, you should have three Docker containers running. For the WebSocket servers, just press `CTRL-C` and they should terminate. The only one left is the Web Server. Following is the command to terminate it.
+When you're done, it's always a good idea to clean everything. If you followed all the steps, you should have two Docker containers running. For the WebSocket servers, just press `CTRL-C` and it should terminate. The only one left is the Web Server. Following is the command to terminate the web server container.
 
 ```command
 docker rm -f webserver
@@ -274,6 +270,11 @@ docker rm -f webserver
 - [Python websockets module](https://websockets.readthedocs.io/en/stable/index.html)
 - [Manos Pithikos Python WebSocket server](https://github.com/Pithikos/python-websocket-server)
 - [WebSocket API](https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API)
+
+- [ws: a Node.js WebSocket library](https://www.npmjs.com/package/ws)
+- [WebSockets - Living Standard](https://websockets.spec.whatwg.org/)
+- [HTTP protocol and WS protocol reuse the same port](https://programmer.group/in-nodejs-http-protocol-and-ws-protocol-reuse-the-same-port.html)
+
 
 ## License
 
