@@ -41,7 +41,7 @@ The WebSocket server accepts different `endpoint`. The `endpoint` is the `path` 
 The workshop includes two servers, each in a Docker container on a _Docker custom network_.
 
 - Nginx web server with **http://** on `TCP/8080` and **https://** on `TCP/8443`.
-- Node JS WebSocket with **ws://** on `TCP/6080` and **wss://** on `TCP/6443`.
+- Node JS WebSocket with **http://** / **ws://** on port `TCP/6080` and **https://** / **wss://** on port `TCP/6443`.
 
 The Nginx web server hosts a standard HTML page to enter the information needed to establish a WebSocket connection. The other server is the Node JS WebSocket server.
 
@@ -55,7 +55,7 @@ The Nginx web server hosts a standard HTML page to enter the information needed 
 
 ### SERVER
 
-The WebSocket server is more or less a web server. It listens on TCP ports `TCP/6080` and `TCP/6443`. The client makes it's first request via HTTP/S asking for a connection upgrade. If the server is a real WebSocket server, it will accept the request and upgrade the procotol.
+The WebSocket server is a web server and a WebSocket server. It listens on TCP ports `TCP/6080` and `TCP/6443`. The client makes it's first request via HTTP/S asking for a connection upgrade. If the server is a real WebSocket server, it will accept the request and upgrade the procotol to WebSocket.
 
 >The WebSocket server multiplex HTTP protocol and WebSocket protocol on the same port.
 
@@ -231,7 +231,7 @@ This command starts one WebSocket server with two listening ports, one for non-s
 ![Port Mapping](images/port_mapping.jpg "Port Mapping")
 
 ```Docker
-docker run -it --rm --name wss --hostname wss --domainname example.com --ip 172.31.10.20 -p 9443:6443 -p 9080:6080 -v $PWD/:/run -w /run --network frontend current-alpine npm run dev
+docker run -it --rm --name wss --hostname wss --domainname example.com --ip 172.31.10.20 -p 9443:6443 -p 9080:6080 -v $PWD/:/run -w /run --network frontend node:current-alpine npm run dev
 ```
 
 ## Step 4 — Test the WebSocket Server
@@ -315,6 +315,12 @@ When you're done, it's always a good idea to clean everything. If you followed a
 
 ```command
 docker rm -f webserver
+```
+
+Check that both of the Docker container you started are terminated.
+
+```command
+docker ps -a
 ```
 
 ## Useful Links
