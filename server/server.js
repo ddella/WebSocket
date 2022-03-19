@@ -92,8 +92,8 @@ wss_bar.on('connection', function connection(ws) {
 // WebSocket with endpoint "/rtt"
 wss_rtt.on('connection', function connection(ws) {
   ws.on('message', function message(data) {
-    ws.send(Date.now());
-    console.log(`Round-Trip Time: ${Date.now() - data} ms`);
+    ws.send(data);
+    console.log(`Timestamp from client: ${data.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, " ")} ms`);
     ws.close();
   });
 });
@@ -144,19 +144,19 @@ server_http.on('upgrade', function upgrade(request, socket, head) {
 
   if (pathname === '/foo') {
     wss_foo.handleUpgrade(request, socket, head, function done(ws) {
-    wss_foo.emit('connection', ws, request);
+      wss_foo.emit('connection', ws, request);
     });
   } else if (pathname === '/bar') {
     wss_bar.handleUpgrade(request, socket, head, function done(ws) {
-    wss_bar.emit('connection', ws, request);
+      wss_bar.emit('connection', ws, request);
     });
   } else if (pathname === '/rtt') {
     wss_rtt.handleUpgrade(request, socket, head, function done(ws) {
-    wss_rtt.emit('connection', ws, request);
+      wss_rtt.emit('connection', ws, request);
     });
   } else if (pathname === '/') {
     wss_.handleUpgrade(request, socket, head, function done(ws) {
-    wss_.emit('connection', ws, request);
+      wss_.emit('connection', ws, request);
     });
   } else {
     socket.destroy();

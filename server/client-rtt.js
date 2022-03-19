@@ -11,6 +11,7 @@ import WebSocket from 'ws';
 
 let wss = null;
 let url = null;
+let start_time = 0;
 
 const myArgs = process.argv.slice(2);
 if (myArgs.length != 1) {
@@ -35,7 +36,8 @@ wss.on('error', (error) => {
 
 wss.on('open', function open() {
   console.log('connected');
-  wss.send(Date.now());
+  start_time = Date.now();
+  wss.send(start_time);
 });
 
 wss.on('close', function close() {
@@ -43,5 +45,8 @@ wss.on('close', function close() {
 });
 
 wss.on('message', function message(data) {
-    console.log(`Round-Trip Time: ${Date.now() - data} ms`);
+  const now = Date.now();
+  const rtt =  now - start_time;
+  // console.log(`start_time=${start_time}  Rx server=${data}  now=${now}  rtt=${rtt}`);
+  console.log(`Round-Trip Time: ${rtt} ms`);
 });
