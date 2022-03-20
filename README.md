@@ -279,7 +279,7 @@ cd server
 
 If you don't want to install Node JS locally, just start another Node JS container and start the client from that container. This client container will map the same local drive as the server and start the client from the command line.
 
-![Client inside Docker container](images/client_inside.png "Client inside Docker container")
+![Client inside Docker container](images/client_inside.jpg "Client inside Docker container")
 
 ```command
 docker run -it --rm --name wsc --hostname wsc --domainname example.com --mount type=bind,source="$(pwd)",target=/run,readonly -w /run --network frontend node:current-alpine /bin/sh
@@ -304,7 +304,7 @@ node client-rtt.js wss://172.31.10.20:6443
 If you do have Node JS installed locally, just start the client from the command line.
 
 
-![Client outside Docker container](images/client_outside.png "Client outside Docker container")
+![Client outside Docker container](images/client_outside.jpg "Client outside Docker container")
 
 For `non secure` WebSocket:
 
