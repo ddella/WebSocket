@@ -43,4 +43,4 @@ services:
 
 ## Useful Links
 
-- [Nice basic WebSocket tutorial](https://github.com/compose-spec/compose-spec/blob/master/spec.md)
+- [The Compose Specification](https://github.com/compose-spec/compose-spec/blob/master/spec.md)
