@@ -202,8 +202,10 @@ cd server
 This command starts the WebSocket server container and opens a shell. We need to install some packages before starting the server.
 
 ```Docker
-docker run -it --rm --name wss --hostname wss --domainname example.com --ip 172.31.10.20 -p 9443:6443 -p 9080:6080 --mount type=bind,source="$(pwd)",target=/run -w /run --network frontend current-alpine /bin/sh
+docker run -it --rm --name wss --hostname wss --domainname example.com --ip 172.31.10.20 -p 9443:6443 -p 9080:6080 --mount type=bind,source="$(pwd)",target=/run -w /run --network frontend node:current-alpine /bin/sh
 ```
+
+>If you prefer Docker Compose, see [WebSocket server YAML](WebSocket_YAML.md)
 
 3. Install Node JS modules.
 
@@ -240,6 +242,8 @@ If you want to map different TCP ports, you can pass them as environement variab
 ```Docker
 docker run -it --rm --name wss --hostname wss --domainname example.com --ip 172.31.10.20 -p 9443:443 -p 9080:80 --mount type=bind,source="$(pwd)",target=/run -w /run --network frontend --env WS_PORT=80 --env WSS_PORT=443 node:current-alpine npm run dev
 ```
+
+>If you prefer Docker Compose, see [WebSocket YAML](WebSocket_YAML.md)
 
 ## Step 4 — Test the WebSocket Server
 
