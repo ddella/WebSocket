@@ -1,0 +1,43 @@
+# version: '3'
+# https://github.com/compose-spec/compose-spec/blob/master/spec.md
+#
+# run the webserver.yml file
+#     docker-compose -f webserver.yml up -d
+#
+# to terminate all the containers:
+#   docker rm -f $(docker container ls -q -f "name=linux[0-4]")
+#
+# docker run --rm -d -p 8080:80 -p 8443:443 \
+# --name webserver --hostname webserver --domainname example.com \
+# --ip 172.31.10.10 --env TZ='EAST+5EDT,M3.2.0/2,M11.1.0/2' \
+# --env TIMEZONE='America/New_York' --network frontend  \
+# -v $PWD/www/:/www -v $PWD/logs/:/var/log/nginx php8_nginx
+#
+
+networks:
+   frontend:
+      name: frontend
+
+services:
+  webserver:
+    image: php8_nginx
+    volumes:
+      - type: bind
+        source: $PWD/www
+        target: /www
+      - type: bind
+        source: $PWD/logs
+        target: /var/log/nginx
+    ports:
+      - "8080:80"
+      - "8443:443"
+    restart: unless-stopped
+    environment:
+      - TZ=EAST+5EDT,M3.2.0/2,M11.1.0/2
+      - TIMEZONE=America/New_York
+    hostname: webserver
+    container_name: webserver
+    domainname: example.com
+    networks:
+      frontend:
+        ipv4_address: 172.31.10.10

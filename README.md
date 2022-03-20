@@ -200,12 +200,12 @@ cd server
 This command starts the WebSocket server container and opens a shell. We need to install some packages before starting the server.
 
 ```Docker
-docker run -it --rm --name wss --hostname wss --domainname example.com --ip 172.31.10.20 -p 9443:6443 -p 9080:6080 -v $PWD/:/run -w /run --network frontend current-alpine /bin/sh
+docker run -it --rm --name wss --hostname wss --domainname example.com --ip 172.31.10.20 -p 9443:6443 -p 9080:6080 --mount type=bind,source="$(pwd)",target=/run -w /run --network frontend current-alpine /bin/sh
 ```
 
 3. Install Node JS modules.
 
-This command starts the WebSocket server container and opens a shell. We need to install some packages before starting the server. The modules installed in the container will be permanent because the container maps it's `/run` directory on your local drive. The modules should be installed in `$PWD/server/node_modules`. If you terminate and restart the container in the same `$PWD`, all modules will be available.
+This command starts the WebSocket server container and opens a shell. We need to install some packages before starting the server. The modules installed in the container will be permanent because the container maps it's `/run` directory on your local drive. The modules should be installed in `$PWD/server/node_modules`. We'll terminate the container and restart it in the next section. You'll see that all modules are available.
 
 ```command
 # install the WebSocket module
@@ -219,6 +219,9 @@ npm install --save-dev bufferutil
 
 # Allows to efficiently check if a message contains valid UTF-8
 npm install --save-dev utf-8-validate
+
+# let's terminate the container. We'll start it again in the next step
+exit
 ```
 
 4. Start the WebSocket server.
@@ -230,15 +233,13 @@ This command starts one WebSocket server with two listening ports, one for non-s
 
 ![Port Mapping](images/port_mapping.jpg "Port Mapping")
 
-```Docker
-docker run -it --rm --name wss --hostname wss --domainname example.com --ip 172.31.10.20 -p 9443:6443 -p 9080:6080 -v $PWD/:/run -w /run --network frontend node:current-alpine npm run dev
-```
-
-If you want to map different TCP ports, you can pass them as environement variables to the Docker container. **Make sure that what's in the `--env WS_PORT=80` matches what's in the right side of the colon in the port mapping `-p 9080:80`**.
+If you want to map different TCP ports, you can pass them as environement variables to the Docker container. **Make sure that what's in the `--env WS_PORT=80` matches what's in the right side of the colon in the port mapping `-p 9080:80`**. If you don't pass the TCP ports as environement variables, the default will be used. See above for the default values.
 
 ```Docker
-docker run -it --rm --name wss --hostname wss --domainname example.com --ip 172.31.10.20 -p 9443:443 -p 9080:80 -v $PWD/:/run -w /run --network frontend --env WS_PORT=80 --env WSS_PORT=443 node:current-alpine npm run dev
+docker run -it --rm --name wss --hostname wss --domainname example.com --ip 172.31.10.20 -p 9443:443 -p 9080:80 --mount type=bind,source="$(pwd)",target=/run -w /run --network frontend --env WS_PORT=80 --env WSS_PORT=443 node:current-alpine npm run dev
 ```
+
+If you prefer Docker Compose, see [web server YAML](Web_Server_YAML.md)
 
 ## Step 4 — Test the WebSocket Server
 
