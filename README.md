@@ -234,7 +234,7 @@ This command starts one WebSocket server with two listening ports, one for non-s
 docker run -it --rm --name wss --hostname wss --domainname example.com --ip 172.31.10.20 -p 9443:6443 -p 9080:6080 -v $PWD/:/run -w /run --network frontend node:current-alpine npm run dev
 ```
 
-If you want to map different TCP ports, you can pass then as environement variables to the Docker container. **Make sure that what's in the `--env WS_PORT=80` matches what's in the right side of the colon in the port mapping `-p 9080:80`**.
+If you want to map different TCP ports, you can pass them as environement variables to the Docker container. **Make sure that what's in the `--env WS_PORT=80` matches what's in the right side of the colon in the port mapping `-p 9080:80`**.
 
 ```Docker
 docker run -it --rm --name wss --hostname wss --domainname example.com --ip 172.31.10.20 -p 9443:443 -p 9080:80 -v $PWD/:/run -w /run --network frontend --env WS_PORT=80 --env WSS_PORT=443 node:current-alpine npm run dev
@@ -261,9 +261,13 @@ Start a connection to the WebSocket server by using client browser. The web serv
 
 ### Test via a Node JS client application script
 
-The command line client initiate a connection to the server. The client just sends the time, in `ms`, to the server and waits for the server to send the time back. It calculates the round-trip time and prints it. The server has been built to close the WebSocket after sending the time.
+The Node JS command line client initiate a connection to the server. The client just sends the time, in `ms`, to the server and waits for the server to send the time back. It calculates the round-trip time and prints it. The server has been built to close the WebSocket after sending the time.
 
-You need to have Node JS installed locally, if you don't or don't want to install it, just run the script from another Node JS Docker container.
+You need to have Node JS installed locally, if you don't or don't want to install it locally, just run the script from another Node JS Docker container.
+
+Summary:
+- Run step #2 if you want to test the client from a Docker container without installing Node JS locally.
+- Run step #3 if you want to test the client from your local computer with Node JS installed locally.
 
 1. Open a `terminal` and change the directory to `$PWD/server`.
 
@@ -271,7 +275,36 @@ You need to have Node JS installed locally, if you don't or don't want to instal
 cd server
 ```
 
-2. Run the client from the command line.
+2. Run the client from a Docker container
+
+If you don't want to install Node JS locally, just start another Node JS container and start the client from that container. This client container will map the same local drive as the server and start the client from the command line.
+
+![Client inside Docker container](images/client_inside.png "Client inside Docker container")
+
+```command
+docker run -it --rm --name wsc --hostname wsc --domainname example.com --mount type=bind,source="$(pwd)",target=/run,readonly -w /run --network frontend node:current-alpine /bin/sh
+```
+
+From the command line, the prompt should look like this `/run #`, start the client. Make sure you specify the correct port number. **Don't forget, you are inside the network __frontend__**.
+
+For `non secure` WebSocket:
+
+```command
+node client-rtt.js ws://172.31.10.20:6080
+```
+
+For `secure` WebSocket:
+
+```command
+node client-rtt.js wss://172.31.10.20:6443
+```
+
+3. Run the client from the command line.
+
+If you do have Node JS installed locally, just start the client from the command line.
+
+
+![Client outside Docker container](images/client_outside.png "Client outside Docker container")
 
 For `non secure` WebSocket:
 
