@@ -117,6 +117,8 @@ I made a workshop on building a simple web server based on Alpine Linux with Ngi
 docker run --rm -d -p 8080:80 -p 8443:443 --name webserver --hostname webserver --domainname example.com --ip 172.31.10.10 --env TZ='EAST+5EDT,M3.2.0/2,M11.1.0/2' --env TIMEZONE='America/New_York' --network frontend  -v $PWD/www/:/www -v $PWD/logs/:/var/log/nginx php8_nginx
 ```
 
+>If you prefer Docker Compose, see [web server YAML](Web_Server_YAML.md)
+
 The web server directory, inside the container, is mounted on your local drive in `$PWD/www/`. You will be able to change the HTML/CSS/JavaScript files without needing to restart the web server. I also mounted a local directory for the web server logs, in case you need to troubleshoot 😉.
 
 If everything works as expected, you should have a web server in a Docker container that you can reach with your favourite browser with the url `http://localhost:8080`.
@@ -238,8 +240,6 @@ If you want to map different TCP ports, you can pass them as environement variab
 ```Docker
 docker run -it --rm --name wss --hostname wss --domainname example.com --ip 172.31.10.20 -p 9443:443 -p 9080:80 --mount type=bind,source="$(pwd)",target=/run -w /run --network frontend --env WS_PORT=80 --env WSS_PORT=443 node:current-alpine npm run dev
 ```
-
-If you prefer Docker Compose, see [web server YAML](Web_Server_YAML.md)
 
 ## Step 4 — Test the WebSocket Server
 
