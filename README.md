@@ -199,17 +199,15 @@ cd server
 
 2. Start the WebSocket server with a shell.
 
-This command starts the WebSocket server container and opens a shell. We need to install some packages before starting the server.
+This command starts the WebSocket server container and opens a shell. We need to install some modules before we're ready to start the WebSocket server.
 
 ```Docker
-docker run -it --rm --name wss --hostname wss --domainname example.com --ip 172.31.10.20 -p 9443:6443 -p 9080:6080 --mount type=bind,source="$(pwd)",target=/run -w /run --network frontend node:current-alpine /bin/sh
+docker run -it --rm --name wss --hostname wss --domainname example.com --ip 172.31.10.20 --mount type=bind,source="$(pwd)",target=/run -w /run --network frontend node:current-alpine /bin/sh
 ```
-
->If you prefer Docker Compose, see [WebSocket server YAML](WebSocket_YAML.md)
 
 3. Install Node JS modules.
 
-This command starts the WebSocket server container and opens a shell. We need to install some packages before starting the server. The modules installed in the container will be permanent because the container maps it's `/run` directory on your local drive. The modules should be installed in `$PWD/server/node_modules`. We'll terminate the container and restart it in the next section. You'll see that all modules are available.
+Type the following commands in the shell of the container started in the previous step.
 
 ```command
 # install the WebSocket module
@@ -228,6 +226,8 @@ npm install --save-dev utf-8-validate
 exit
 ```
 
+>The modules will be installed in the container `/run` directory, but since it's map to your local drive, the modules will be installed on your local drive inside the directory you created for this workshop. The modules should be installed in `server/node_modules`.
+
 4. Start the WebSocket server.
 
 This command starts one WebSocket server with two listening ports, one for non-secure mode, `ws://`, and one for secure mode, `wss://`.
@@ -243,7 +243,7 @@ If you want to map different TCP ports, you can pass them as environement variab
 docker run -it --rm --name wss --hostname wss --domainname example.com --ip 172.31.10.20 -p 9443:443 -p 9080:80 --mount type=bind,source="$(pwd)",target=/run -w /run --network frontend --env WS_PORT=80 --env WSS_PORT=443 node:current-alpine npm run dev
 ```
 
->If you prefer Docker Compose, see [WebSocket YAML](WebSocket_YAML.md)
+>If you prefer Docker Compose, see [WebSocket server YAML](WebSocket_YAML.md)
 
 ## Step 4 — Test the WebSocket Server
 
@@ -355,6 +355,12 @@ When you're done, it's always a good idea to clean everything. If you followed a
 
 ```command
 docker rm -f webserver
+```
+
+If you started the WebSocket server with `docker compose`, you need to remove it, as there's no such thing as `--rm`.
+
+```command
+docker rm -f wss
 ```
 
 Check that all of the Docker container you started are terminated.

@@ -3,7 +3,7 @@
 # https://github.com/compose-spec/compose-spec/blob/master/spec.md
 #
 # run the WebSocket.yml file
-#     docker compose -f WebSocket.yml up [-d]
+#     docker compose -f WebSocket.yml --project-name wss up [-d]
 #
 # to terminate the container, hit CTRL-C
 #
@@ -26,7 +26,8 @@ services:
     command: npm run dev
     volumes:
       - type: bind
-        source: $PWD/server
+        source: $PWD
+        # source: $PWD/server
         target: /run
     ports:
       - "9080:6080"
