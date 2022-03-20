@@ -244,24 +244,24 @@ docker run -it --rm --name wss --hostname wss --domainname example.com --ip 172.
 
 ### Test via the web server
 
-Start a connection to the WebSocket server by using client browser. The web server sends a standard HTML page with a JavaScript. It's the JavaScript that will initiate the connection to the WebSocket server.
-
-1. Start your favorite browser
-2. Type the url `localhost:8080`
+1. Start your favorite browser.
+2. Type the url `localhost:8080`.
 3. Fill the information and press `connect`.
 4. Type a message in the `input message box` and hit the button `Send Message`. If successful, the server will send the message back in the box below.
 
+>The web server sends a standard HTML page with a JavaScript. The HTML page has fields for the information needed to start the WebSocket session. The JavaScript will initiate the connection to the WebSocket server. The browser is the `client` here.
+
 ![Successful connection](images/connected.png "Success")
 
->Those are the different `endpoint` accepted by the server. The endpoint `/rtt` does only make sense with the Node JS client.
+>Those are the different `endpoint` accepted by the server. The endpoint `/rtt` does only make sense with the Node JS client. If you enter an `endpoint` not defined, the server sends a error message and close the session. This is per design.
+>>- /  
 >>- /foo  
 >>- /bar  
->>- /  
 >>- /rtt  
 
 ### Test via a Node JS client application script
 
-The Node JS command line client initiate a connection to the server. The client just sends the time, in `ms`, to the server and waits for the server to send the time back. It calculates the round-trip time and prints it. The server has been built to close the WebSocket after sending the time.
+The Node JS command line client initiate a connection to the server. The URL is passed as an argument to the script. The client just sends the time, in `ms`, to the server and waits for the server to send it back. It calculates the round-trip time and prints it. The server has been built to close the WebSocket after sending the time.
 
 You need to have Node JS installed locally, if you don't or don't want to install it locally, just run the script from another Node JS Docker container.
 
@@ -281,11 +281,13 @@ If you don't want to install Node JS locally, just start another Node JS contain
 
 ![Client inside Docker container](images/client_inside.jpg "Client inside Docker container")
 
+Start a temporary Node JS container, jump into the shell and run the command from there. When done testing, just type `exit` and the container will terminate. No need to specify a static IP for the client, DHCP will be just fine. Since the client script is in the same directory as the server, the same directory is mounted but this time in `readonly`.
+
 ```command
 docker run -it --rm --name wsc --hostname wsc --domainname example.com --mount type=bind,source="$(pwd)",target=/run,readonly -w /run --network frontend node:current-alpine /bin/sh
 ```
 
-From the command line, the prompt should look like this `/run #`, start the client. Make sure you specify the correct port number. **Don't forget, you are inside the network __frontend__**.
+From the command line, the prompt should look like this `/run #`. Just type either or both commands to start the client. Make sure you specify the correct port number. **Don't forget, you are INSIDE the network __frontend__**. The IP address if the WebSocket server is it's real IP address inside the network `frontend`.
 
 For `non secure` WebSocket:
 
@@ -301,8 +303,7 @@ node client-rtt.js wss://172.31.10.20:6443
 
 3. Run the client from the command line.
 
-If you do have Node JS installed locally, just start the client from the command line.
-
+If you have Node JS installed locally, you can start the client from the host command line. The IP address of the WebSocket server is `localhost` and the TCP ports are the external one, not the one configured on the server.
 
 ![Client outside Docker container](images/client_outside.jpg "Client outside Docker container")
 
@@ -351,7 +352,7 @@ When you're done, it's always a good idea to clean everything. If you followed a
 docker rm -f webserver
 ```
 
-Check that both of the Docker container you started are terminated.
+Check that all of the Docker container you started are terminated.
 
 ```command
 docker ps -a
