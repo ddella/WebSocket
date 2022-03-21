@@ -116,6 +116,24 @@ server_https.on('upgrade', function upgrade(request, socket, head) {
   const myURL = new URL(request.url, `https://${request.headers.host}`);
   const pathname = myURL.pathname;
 
+  // Make sure that we only handle WebSocket upgrade requests
+  if (request.headers['upgrade'] !== 'websocket') {
+    socket.end('HTTP/1.1 400 Bad Request');
+    console.log('HTTP/1.1 400 Bad Request: "upgrade request" is not "websocket"');
+    return;
+  }
+
+  // Read the subprotocol from the client request headers:
+  const protocol = request.headers['sec-websocket-protocol'];
+  if (protocol) {
+    console.log('sec-websocket-protocol: ' + protocol);
+    // If provided, they'll be formatted as a comma-delimited string of protocol
+    // names that the client supports; we'll need to parse the header value.
+  } else {
+    console.log('sec-websocket-protocol is EMPTY');
+  }
+
+  // depending on the 'endpoint' value, we send the request to the appropriate WebSocket handler
   if (pathname === '/foo') {
     wss_foo.handleUpgrade(request, socket, head, function done(ws) {
       wss_foo.emit('connection', ws, request);
@@ -141,6 +159,13 @@ server_https.on('upgrade', function upgrade(request, socket, head) {
 server_http.on('upgrade', function upgrade(request, socket, head) {
   const myURL = new URL(request.url, `http://${request.headers.host}`);
   const pathname = myURL.pathname;
+
+  // Make sure that we only handle WebSocket upgrade requests
+  if (request.headers['upgrade'] !== 'websockett') {
+    socket.end('HTTP/1.1 400 Bad Request');
+    console.log('HTTP/1.1 400 Bad Request: "upgrade request" is not "websocket"');
+    return;
+  }
 
   if (pathname === '/foo') {
     wss_foo.handleUpgrade(request, socket, head, function done(ws) {

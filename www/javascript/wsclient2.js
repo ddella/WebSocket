@@ -5,11 +5,13 @@ function onConnectClick() {
    var ws_hostname = document.getElementById("inputHostname").value;
    var ws_port     = document.getElementById("inputPort").value;
    var ws_endpoint = document.getElementById("inputEndpoint").value;
-   // var ws_protocol = document.querySelector('input[name = gridRadios]:checked').value;
+
+   // builds the array of "sub-protocol"
+   var ws_secwebsocket = WebSocketProtocol(document.getElementById("inputSecWebsocket").value);
    var ws_protocol = document.getElementById("selectProtocol").value;
 
    var webSocketURL = ws_protocol + ws_hostname + ":" + ws_port + "/" + ws_endpoint;
-   openWSConnection(ws_protocol, ws_hostname, ws_port, ws_endpoint);
+   openWSConnection(ws_protocol, ws_hostname, ws_port, ws_endpoint, ws_secwebsocket);
    console.log(webSocketURL);
 }
 function onDisconnectClick() {
@@ -54,24 +56,17 @@ addEventListener('unload', (event) => {
 /**
  * Open a new WebSocket connection using the given parameters
  */
-function openWSConnection(protocol, hostname, port, endpoint) {
+function openWSConnection(protocol, hostname, port, endpoint, secWebSocketProtocol) {
    var webSocketURL = null;
 
+   // remove trailing '/' at the end of 'endpoint', if present
    endpoint = endpoint.replace(/^\/+|\/+$/g, '');
-   // remove leading '/'. Doesn't remove multiple ones.
-   // if (endpoint.charAt(0) === "/") {
-      // endpoint = endpoint.substr(1);
-   // }
-   // remove trailing '/'. Doesn't remove multiple ones.
-   // if (endpoint.charAt(endpoint.length - 1) === "/") {
-      // endpoint = endpoint.substr(0, endpoint.length - 1);
-   // }
 
    webSocketURL = protocol + hostname + ":" + port + "/" + endpoint;
    console.log("openWSConnection::Connecting to: " + webSocketURL);
    onSpinner();
-   try {
-        webSocket = new WebSocket(webSocketURL);
+   try { 
+        webSocket = new WebSocket(webSocketURL, secWebSocketProtocol);
         // Change binary type from "blob" to "arraybuffer"
         webSocket.binaryType = "arraybuffer";
 
@@ -172,4 +167,13 @@ function onClearMessage() {
 }
 function validate(){
    console.log("validate() called");
+}
+
+function WebSocketProtocol(strProtocol) {
+   // Split a string using space character
+   let arr = strProtocol.split(' ');
+
+   // builds the array of protocol from a "space" separated string
+   console.log(arr); // ex.: ["soap", "xmpp", "wamp", "mqtt"]
+   return arr;
 }
