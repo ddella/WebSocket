@@ -7,7 +7,7 @@ This is the `yaml` file to run the Web Server detached.
 To start the web server, just type the following command, with the file `webserver.yml`.
 
 ```command
-docker-compose -f webserver.yml up -d
+docker compose -f webserver.yml --project-name webserver up -d
 ```
 
 ```yaml

@@ -59,7 +59,7 @@ The WebSocket server is a web server and a WebSocket server. It listens on TCP p
 
 >The WebSocket server multiplex HTTP protocol and WebSocket protocol on the same port.
 
-This is a Wireshark packet capture of the request from the client asking to `upgrade` the protocol to WebSocket.
+This is a Wireshark packet capture of the handshake from the client asking to `upgrade` the protocol to WebSocket.
 
       GET /foo HTTP/1.1
       Host: 127.0.0.1:6080
@@ -75,7 +75,7 @@ This is a Wireshark packet capture of the request from the client asking to `upg
       Sec-WebSocket-Key: n6L8hzDkt+MaFqHE3iefTQ==
       Sec-WebSocket-Extensions: permessage-deflate; client_max_window_bits
 
-This is a Wireshark packet capture of the response from the server that accept the request from the client.
+This is a Wireshark packet capture of the handshake from the server.
 
       HTTP/1.1 101 Switching Protocols
       Upgrade: websocket
@@ -231,13 +231,13 @@ exit
 4. Start the WebSocket server.
 
 This command starts one WebSocket server with two listening ports, one for non-secure mode, `ws://`, and one for secure mode, `wss://`.
->The Node JS server listen on both TCP port `6080` and `6443`.  
->- The Docker host maps TCP port `9080` to `6080` on the Docker container.  
->- The Docker host maps TCP port `9443` to `6443` on the Docker container.  
+>The Node JS WebSocket server listen on both TCP port `6080` and `6443`, by defaults.  
+>- The Docker host maps TCP port `9080` to `6080` inside the Docker container.  
+>- The Docker host maps TCP port `9443` to `6443` inside the Docker container.  
 
 ![Port Mapping](images/port_mapping.jpg "Port Mapping")
 
-If you want to map different TCP ports, you can pass them as environement variables to the Docker container. **Make sure that what's in the `--env WS_PORT=80` matches what's in the right side of the colon in the port mapping `-p 9080:80`**. If you don't pass the TCP ports as environement variables, the default will be used. See above for the default values.
+If you want to map different TCP ports, you can pass them as environement variables to the Docker container. **Make sure that what's in the `--env WS_PORT=80` matches what's on the right side of the ':' in the port mapping `-p 9080:80`**. If you don't pass the TCP ports as environement variables, the default will be used. See above for the default values.
 
 ```Docker
 docker run -it --rm --name wss --hostname wss --domainname example.com --ip 172.31.10.20 -p 9443:443 -p 9080:80 --mount type=bind,source="$(pwd)",target=/run -w /run --network frontend --env WS_PORT=80 --env WSS_PORT=443 node:current-alpine npm run dev

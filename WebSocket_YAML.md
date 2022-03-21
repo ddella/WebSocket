@@ -2,12 +2,12 @@
 
 ### YAML file to start the WebSocket Server
 
-This is the `yaml` file to run the WebSocket Server attached.
+This is the `yaml` file to run the WebSocket Server `attached`.
 
 To start the WebSocket server, just type the following command, with the file `WebSocket.yml`.
 
 ```command
-docker-compose -f WebSocket.yml up -d
+docker compose -f WebSocket.yml --project-name wss up
 ```
 
 ```yaml
@@ -23,7 +23,7 @@ services:
     command: npm run dev
     volumes:
       - type: bind
-        source: $PWD/server
+        source: $PWD
         target: /run
     ports:
       - "9080:6080"

@@ -11,7 +11,7 @@
 # --domainname example.com --ip 172.31.10.20 \
 # -p 9443:6443 -p 9080:6080 \
 # --mount type=bind,source="$(pwd)",target=/run \
-# -w /run --network frontend node:current-alpine /bin/sh
+# -w /run --network frontend node:current-alpine npm run dev
 
 # https://stackoverflow.com/questions/50947938/docker-compose-orphan-containers-warning
 
@@ -27,7 +27,6 @@ services:
     volumes:
       - type: bind
         source: $PWD
-        # source: $PWD/server
         target: /run
     ports:
       - "9080:6080"
