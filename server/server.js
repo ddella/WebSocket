@@ -33,18 +33,9 @@ import * as http from 'http'; //ES 6
 import * as https from 'https'; //ES 6
 import { readFileSync } from 'fs';
 import { WebSocketServer } from 'ws';
-import { log } from 'console';
 
-let WS_PORT  = 6080;
-let WSS_PORT = 6443;
-
-if (process.env.WS_PORT) {
-  WS_PORT = process.env.WS_PORT;
-}
-
-if (process.env.WSS_PORT) {
-  WSS_PORT = process.env.WSS_PORT;
-}
+const WS_PORT = process.env.WS_PORT ? process.env.WS_PORT : 6080;
+const WSS_PORT = process.env.WSS_PORT ? process.env.WSS_PORT : 6443;
 
 const options = {
   cert: readFileSync('ssl/websocket.crt'),
@@ -104,22 +95,54 @@ wss_.on('connection', function connection(ws) {
     console.log('received: %s', data);
     ws.send(data.toString());
   });
-  ws.send('Connected to "/". No endpoint...');
+  ws.send('Connected to "/". No endpoint specified...');
   ws.on('close', () => {
     console.log('Connection closed');
     // clearInterval(interval);
   });
 });
 
-server_https.on('upgrade', function upgrade(request, socket, head) {
-  // const { pathname } = parse(request.url);
-  const myURL = new URL(request.url, `https://${request.headers.host}`);
-  const pathname = myURL.pathname;
+function upgrade(request, socket, head) {
+  // const myURL = new URL(request.url, `https://${request.headers.host}`);
+  // const pathname = myURL.pathname;
+  const pathname = request.url;
+
+  // request.method, URL and httpVersion
+  // console.log(request.method + ' ' + request.url + ' HTTP/' + request.httpVersion);
+
+  // basic authentication
+  const authheader = request.headers.authorization;
+  // console.log(request.headers);
+
+  // print the cookie
+  var setcookie = request.headers["set-cookie"];
+  if ( setcookie ) {
+    setcookie.forEach(
+      function ( cookiestr ) {
+        console.log( "COOKIE:" + cookiestr );
+      }
+    );
+  }
+
+  if (!authheader) {
+      console.log('No Authenticated Header found.');
+  } else {
+    const auth_type = new Buffer.from(authheader.split(' ')[0]).toString();
+    switch(auth_type.toUpperCase()) {
+      case 'BASIC':
+        const [username, password] = new Buffer.from(authheader.split(' ')[1], 'base64').toString().split(':');
+        console.log(auth_type + ' Authenticated Header found => ' + 'Username: ' + username + ' - Password: ' + password);
+        break;
+      default:
+        console.log('Authentication header found but unknown type: ' + auth_type);
+        break;
+    }
+  }
 
   // Make sure that we only handle WebSocket upgrade requests
   if (request.headers['upgrade'] !== 'websocket') {
     socket.end('HTTP/1.1 400 Bad Request');
-    console.log('HTTP/1.1 400 Bad Request: "upgrade request" is not "websocket"');
+    console.log('HTTP/1.1 400 Bad Request: "upgrade request" is not "websocket". Received: ' + '[' + request.headers['upgrade'] + ']');
     return;
   }
 
@@ -127,13 +150,12 @@ server_https.on('upgrade', function upgrade(request, socket, head) {
   const protocol = request.headers['sec-websocket-protocol'];
   if (protocol) {
     console.log('sec-websocket-protocol: ' + protocol);
-    // If provided, they'll be formatted as a comma-delimited string of protocol
-    // names that the client supports; we'll need to parse the header value.
+    // if sub-protocol are provided, they will be formatted as a comma-delimited string.
   } else {
     console.log('sec-websocket-protocol is EMPTY');
   }
 
-  // depending on the 'endpoint' value, we send the request to the appropriate WebSocket handler
+  // depending on the 'endpoint' value, we send the request to the appropriate WebSocket Server handler (wss_xxxx)
   if (pathname === '/foo') {
     wss_foo.handleUpgrade(request, socket, head, function done(ws) {
       wss_foo.emit('connection', ws, request);
@@ -154,40 +176,21 @@ server_https.on('upgrade', function upgrade(request, socket, head) {
     socket.destroy();
     console.log('Endpoint is invalid. Please specify either "foo", "bar" or no endpoint.');
   }
+}
+
+// HTTPS 'upgrade' request to wss://
+server_https.on('upgrade', (request, socket, head) => {
+  console.log('HTTPS upgrade request');
+  upgrade(request, socket, head);
 });
 
-server_http.on('upgrade', function upgrade(request, socket, head) {
-  const myURL = new URL(request.url, `http://${request.headers.host}`);
-  const pathname = myURL.pathname;
-
-  // Make sure that we only handle WebSocket upgrade requests
-  if (request.headers['upgrade'] !== 'websockett') {
-    socket.end('HTTP/1.1 400 Bad Request');
-    console.log('HTTP/1.1 400 Bad Request: "upgrade request" is not "websocket"');
-    return;
-  }
-
-  if (pathname === '/foo') {
-    wss_foo.handleUpgrade(request, socket, head, function done(ws) {
-      wss_foo.emit('connection', ws, request);
-    });
-  } else if (pathname === '/bar') {
-    wss_bar.handleUpgrade(request, socket, head, function done(ws) {
-      wss_bar.emit('connection', ws, request);
-    });
-  } else if (pathname === '/rtt') {
-    wss_rtt.handleUpgrade(request, socket, head, function done(ws) {
-      wss_rtt.emit('connection', ws, request);
-    });
-  } else if (pathname === '/') {
-    wss_.handleUpgrade(request, socket, head, function done(ws) {
-      wss_.emit('connection', ws, request);
-    });
-  } else {
-    socket.destroy();
-    console.log('Endpoint is invalid. Please specify either "foo", "bar" or no endpoint.');
-  }
+// HTTP 'upgrade' request to ws://
+server_http.on('upgrade', (request, socket, head) => {
+  console.log('HTTP upgrade request');
+  upgrade(request, socket, head);
 });
 
 server_http.listen(WS_PORT);
 server_https.listen(WSS_PORT);
+console.log('HTTP server listening on port ' + WS_PORT);
+console.log('HTTPS server listening on port ' + WSS_PORT + '\r\n');

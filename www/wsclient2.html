@@ -37,7 +37,7 @@
           <div class="row mb-3">
              <label for="inputHostname" class="col-sm-2 col-form-label">Hostname</label>
              <div class="col-sm-10">
-               <input type="test" class="form-control" id="inputHostname" placeholder="Hostname of WebSocket server">
+               <input type="test" class="form-control" id="inputHostname" placeholder="Hostname/IP address of WebSocket server">
              </div>
           </div>
           <!-- TCP port # -->
@@ -51,14 +51,14 @@
           <div class="row mb-3">
              <label for="inputEndpoint" class="col-sm-2 col-form-label">Endpoint</label>
              <div class="col-sm-10">
-               <input type="text" class="form-control" id="inputEndpoint"  placeholder="Endpoint (optional)">
+               <input type="text" class="form-control" data-toggle="tooltip" data-placement="right" title="This is the endpoint or pathname. It's the pathname after the URL. This is optional." id="inputEndpoint"  placeholder="pathname (optional)">
              </div>
           </div>
-          <!-- WebSocket sec-websocket -->
+          <!-- WebSocket sec-websocket-protocol -->
           <div class="row mb-3">
             <label for="inputSecWebsocket" class="col-sm-2 col-form-label">Sub Protocol</label>
             <div class="col-sm-10">
-              <input type="text" class="form-control" id="inputSecWebsocket"  placeholder="soap xmpp wamp mqtt (optional)">
+              <input type="text" class="form-control" data-toggle="tooltip" data-placement="right" title="This is the WebSocket sub-protocol. If you enter more than one protocol, insert a whitespace in between. This is optional." id="inputSecWebsocket" placeholder="Ex.: soap xmpp wamp mqtt (optional)">
             </div>
           </div>
           <!-- Select WebSocket protocol -->

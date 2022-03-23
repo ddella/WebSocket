@@ -59,6 +59,7 @@ addEventListener('unload', (event) => {
 function openWSConnection(protocol, hostname, port, endpoint, secWebSocketProtocol) {
    var webSocketURL = null;
 
+   console.log('secWebSocketProtocol: ' + secWebSocketProtocol);
    // remove trailing '/' at the end of 'endpoint', if present
    endpoint = endpoint.replace(/^\/+|\/+$/g, '');
 
@@ -66,66 +67,73 @@ function openWSConnection(protocol, hostname, port, endpoint, secWebSocketProtoc
    console.log("openWSConnection::Connecting to: " + webSocketURL);
    onSpinner();
    try { 
-        webSocket = new WebSocket(webSocketURL, secWebSocketProtocol);
-        // Change binary type from "blob" to "arraybuffer"
-        webSocket.binaryType = "arraybuffer";
+      const encodedToken = 'ZGFuaWVsOnNlY3JldA==';
+      const cookie = 'id=0123456789abcdef'
+      const headers = {
+         'Authorization': `Basic ${encodedToken}`,
+         'Cookie': `${cookie}`
+      };
+      webSocket = new WebSocket(webSocketURL, secWebSocketProtocol, headers);
 
-        webSocket.onopen = function(openEvent) {
-            console.log("WebSocket OPEN: " + JSON.stringify(openEvent, null, 4));
-            document.getElementById("alert_connection").classList.remove("alert-danger");
-            document.getElementById("alert_connection").classList.add("alert-success");
-            document.getElementById("alert_connection").innerHTML="Connected to: " + "<b>" + webSocketURL + "</b>";
-            // document.getElementById("alert_connection").textContent="Connected to " + "<b>" + webSocketURL + "</b>";
+      // Change binary type from "blob" to "arraybuffer"
+      webSocket.binaryType = "arraybuffer";
 
-            document.getElementById("btnDisconnect").classList.remove("disabled");
-            document.getElementById("btnConnect").classList.add("disabled");
-            document.getElementById("btnConnectSpinner").classList.remove("spinner-border");
-            document.getElementById("btnConnectSpinner").classList.remove("spinner-border-sm");
+      webSocket.onopen = function(openEvent) {
+         console.log("WebSocket OPEN: " + JSON.stringify(openEvent, null, 4));
+         document.getElementById("alert_connection").classList.remove("alert-danger");
+         document.getElementById("alert_connection").classList.add("alert-success");
+         document.getElementById("alert_connection").innerHTML="Connected to: " + "<b>" + webSocketURL + "</b>";
+         // document.getElementById("alert_connection").textContent="Connected to " + "<b>" + webSocketURL + "</b>";
 
-        };
-        webSocket.onclose = function (closeEvent) {
-            console.log("WebSocket CLOSE: " + JSON.stringify(closeEvent, null, 4));
-            document.getElementById("alert_connection").classList.remove("alert-success");
-            document.getElementById("alert_connection").classList.add("alert-danger");
-            document.getElementById("alert_connection").textContent="Disconnected...";
+         document.getElementById("btnDisconnect").classList.remove("disabled");
+         document.getElementById("btnConnect").classList.add("disabled");
+         document.getElementById("btnConnectSpinner").classList.remove("spinner-border");
+         document.getElementById("btnConnectSpinner").classList.remove("spinner-border-sm");
 
-            document.getElementById("btnDisconnect").classList.add("disabled");
-            document.getElementById("btnConnect").classList.remove("disabled");
-        };
-        webSocket.onerror = function (errorEvent) {
-            console.log("WebSocket ERROR: " + JSON.stringify(errorEvent, null, 4));
-            var galleryModal = new bootstrap.Modal(document.getElementById('errorModal'))
-            document.getElementById("errorModalBody").innerHTML="WebSocket ERROR: " + JSON.stringify(errorEvent, null, 4);
-            document.getElementById("errorModalHeader").innerHTML="WebSocket error!";
-            galleryModal.show();
-            offSpinner();
-        };
-        webSocket.onmessage = function (messageEvent) {
-            let wsMsg = messageEvent.data;
-            if(wsMsg instanceof ArrayBuffer) {
-               // binary frame
-               const view = new DataView(wsMsg);
-               // 'view' can be empty???
-               if (view) {
-                  console.log("Binary data of length: " + view.byteLength);
-                  let strByte = "";
-                  // print no more than 10 bytes
-                  for (let i = 0; i < view.byteLength && i < 10; i++) {
-                     strByte += view.getUint8(i) + ", ";
-                  }
-                  strByte = strByte.slice(0, - 2); // remove the last ", " from the string
-                  document.getElementById("incomingMsgOutput").value += "BIN->Rx: " + strByte + "\r\n";   
-               } else {
-                  console.log("WebSocket BINARY packet was empty!");
+      };
+      webSocket.onclose = function (closeEvent) {
+         console.log("WebSocket CLOSE: " + JSON.stringify(closeEvent, null, 4));
+         document.getElementById("alert_connection").classList.remove("alert-success");
+         document.getElementById("alert_connection").classList.add("alert-danger");
+         document.getElementById("alert_connection").textContent="Disconnected...";
+
+         document.getElementById("btnDisconnect").classList.add("disabled");
+         document.getElementById("btnConnect").classList.remove("disabled");
+      };
+      webSocket.onerror = function (errorEvent) {
+         console.log("WebSocket ERROR: " + JSON.stringify(errorEvent, null, 4));
+         var galleryModal = new bootstrap.Modal(document.getElementById('errorModal'))
+         document.getElementById("errorModalBody").innerHTML="WebSocket ERROR: " + JSON.stringify(errorEvent, null, 4);
+         document.getElementById("errorModalHeader").innerHTML="WebSocket error!";
+         galleryModal.show();
+         offSpinner();
+      };
+      webSocket.onmessage = function (messageEvent) {
+         let wsMsg = messageEvent.data;
+         if(wsMsg instanceof ArrayBuffer) {
+            // binary frame
+            const view = new DataView(wsMsg);
+            // 'view' can be empty???
+            if (view) {
+               console.log("Binary data of length: " + view.byteLength);
+               let strByte = "";
+               // print no more than 10 bytes
+               for (let i = 0; i < view.byteLength && i < 10; i++) {
+                  strByte += view.getUint8(i) + ", ";
                }
-           } else if (typeof wsMsg === 'string') {
-               // text frame
-               console.log(wsMsg);
-               document.getElementById("incomingMsgOutput").value += "TXT->Rx: " + wsMsg + "\r\n";
-           } else {
-            console.log("WebSocket unknown packet type: " + typeof wsMsg);
-           }
-        };
+               strByte = strByte.slice(0, - 2); // remove the last ", " from the string
+               document.getElementById("incomingMsgOutput").value += "BIN->Rx: " + strByte + "\r\n";   
+            } else {
+               console.log("WebSocket BINARY packet was empty!");
+            }
+         } else if (typeof wsMsg === 'string') {
+            // text frame
+            console.log(wsMsg);
+            document.getElementById("incomingMsgOutput").value += "TXT->Rx: " + wsMsg + "\r\n";
+         } else {
+         console.log("WebSocket unknown packet type: " + typeof wsMsg);
+         }
+      };
    } catch (exception) {
       console.error("webSocket fatal console.error();: " + exception);
       var galleryModal = new bootstrap.Modal(document.getElementById('errorModal'))
@@ -170,6 +178,10 @@ function validate(){
 }
 
 function WebSocketProtocol(strProtocol) {
+   // returns NULL if string is empty
+   if (strProtocol === '') {
+      return null;
+   }
    // Split a string using space character
    let arr = strProtocol.split(' ');
 

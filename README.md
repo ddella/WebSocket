@@ -374,15 +374,13 @@ docker ps -a
 - [Nice basic WebSocket tutorial](https://blog.teamtreehouse.com/an-introduction-to-websockets)
 - [How Do Websockets Work?](https://sookocheff.com/post/networking/how-do-websockets-work/)
 - [WebSocket Client frontend](https://www.pegaxchange.com/2018/03/23/websocket-client/)
-- [Python websockets module](https://websockets.readthedocs.io/en/stable/index.html)
-- [Manos Pithikos Python WebSocket server](https://github.com/Pithikos/python-websocket-server)
 - [WebSocket API](https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API)
-
+- [WebSocket client API](https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API/Writing_WebSocket_client_applications)
 - [ws: a Node.js WebSocket library](https://www.npmjs.com/package/ws)
 - [WebSockets - Living Standard](https://websockets.spec.whatwg.org/)
 - [HTTP protocol and WS protocol reuse the same port](https://programmer.group/in-nodejs-http-protocol-and-ws-protocol-reuse-the-same-port.html)
 - [Sub Protocol](https://medium.com/hackernoon/implementing-a-websocket-server-with-node-js-d9b78ec5ffa8)
-
+- [wscat (very good WebSocket client)](https://github.com/websockets/wscat)
 
 ## License
 
