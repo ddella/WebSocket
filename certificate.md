@@ -1,19 +1,20 @@
-﻿# Web Server / WebSocket Server SSL/TLS certificate
+﻿# Web Server or WebSocket Server SSL/TLS certificate
 
 ## Introduction
 
 To be able to use secure WebSocket, `wss://`, you need to buy or create an `SSL/TLS` certificate. Since it's for a workshop, I decided to create my own certificate and trust it in my OS.
 
-Steps to create a self-signed SSL/TLS certificate. This can be used for `https://` or WebSocket server `wss://`.
+The self-signed SSL/TLS certificate can be used for `https://` or WebSocket server `wss://`.
 
 If you cloned this workshop and followed all the steps, you should be in the directory `server` and have the sub-directory `ssl` with only the file `websocket.cnf`.
 
-You can generate two types of certificate,
+You can generate two types of certificate:
+
 1. a self-signed certificate.
 2. a certificate signed by your private CA.
->For this workshop both will work just fine. Just do one of the preceding steps, it won't do any harm if you do both.
+>For this workshop, both will work just fine. Just do **one** of the preceding steps, it won't do any harm if you do both.
 
-3. The last step is to **trust** the cetificate you created.
+3. The last step is to **trust** the cetificate you created, in your OS.
 
 ## 1. Create a Self-signed certificate
 
@@ -35,9 +36,9 @@ openssl req -new -key ssl/ws-private-key.pem -out ssl/ws-csr.pem -config ssl/web
 openssl x509 -req -in ssl/ws-csr.pem -signkey ssl/ws-private-key.pem -out ssl/ws-public-cert.pem -days 3650 -sha256 -extfile ssl/websocket.cnf -extensions v3_req
 ```
 
-This is the code in NodeJS to read the certificate.
+This is the code, in NodeJS, to read the certificate and private key.
 
-```nodejs
+```node
 const options = {
   cert: readFileSync('ssl/ws-public-cert.pem'),
   key: readFileSync('ssl/ws-private-key.pem')
@@ -74,7 +75,7 @@ openssl genrsa -out ssl/websocket.key 4096
 openssl req -new -key ssl/websocket.key -out ssl/websocket.csr -config ssl/websocket.cnf -extensions v3_req
 ```
 
-5. create the certificate for the WebSocket server
+5. create the certificate for the WebSocket server, signed by your own CA
 
 ```command
 openssl x509 -req -in ssl/websocket.csr -CA ssl/websocket_rootCA.crt -CAkey ssl/websocket_rootCA.key -CAcreateserial -out ssl/websocket.crt -days 3650 -sha256 -extfile ssl/websocket.cnf -extensions v3_req
@@ -82,7 +83,7 @@ openssl x509 -req -in ssl/websocket.csr -CA ssl/websocket_rootCA.crt -CAkey ssl/
 
 This is the code in NodeJS to read the certificate.
 
-```nodejs
+```node
 const options = {
   cert: readFileSync('ssl/websocket.crt'),
   key: readFileSync('ssl/websocket.key')
@@ -95,11 +96,12 @@ If you're on a macOS, this certificate will look like this, in KeyChain, when it
 
 ## 3. Trust certificate (macOS)
 
-If you follow step #1, the file `ws-public-cert.pem` is your self-signed certificate. If you followed step #2, the file `websocket.crt` is your self-signed certificate.
+If you followed step #1, the file `ws-public-cert.pem` is your certificate.
+If you followed step #2, the file `websocket.crt` is your certificate.
 
 It needs to be marked as **trusted for this account** in your OS.
 
-1. In the case of macOS, open the file vertificate file in KeyChain. Right click -> Open With -> KeyChain Access (default)
+1. In the case of macOS, open the certificate file in KeyChain. Right click -> Open With -> Keychain Access (default)
 
 ![untrusted new certificate](images/keychain1.png)
 
@@ -135,4 +137,4 @@ If you use **Firefox**, you might get the error `SEC_ERROR_UNKNOWN_ISSUER`. It c
 
 Check the how-to on Mozilla's web site: ![Enable Enterprise Roots](https://support.mozilla.org/en-US/kb/how-disable-enterprise-roots-preference/)
 
-[_^ go back to_](./README.md#START-THE-WEBSOCKET-SERVER)
+[_^ go back to where I was_](./README.md#START-THE-WEBSOCKET-SERVER)
