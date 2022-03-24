@@ -137,55 +137,7 @@ docker pull node:current-alpine
 
 ### CREATE THE CERTIFICATE FOR SECURE WEBSOCKET `wss://`
 
-Secure WebSocket requires a standard `SSL/TLS` certificate, the same way as `https` do. In this workshop, we'll use a **self-signed** certificate. The tricky part is to have this self-signed certificate being accepted by your browser, your client and your operating system.
-
-If you're on a Linux or macOS, use `openssl` to create the certificate. Just type the following commands to generate the self-signed certificate.
-
-```command
-openssl genrsa -out ssl/websocket_rootCA.key 4096
-openssl req -x509 -new -nodes -key ssl/websocket_rootCA.key -sha256 -days 3650 -out ssl/websocket_rootCA.crt -config ssl/websocket.cnf -extensions v3_ca -subj "/CN=websocket Root CA"
-openssl genrsa -out ssl/websocket.key 4096
-openssl req -new -key ssl/websocket.key -out ssl/websocket.csr -config ssl/websocket.cnf -extensions v3_req
-openssl x509 -req -in ssl/websocket.csr -CA ssl/websocket_rootCA.crt -CAkey ssl/websocket_rootCA.key -CAcreateserial -out ssl/websocket.crt -days 3650 -sha256 -extfile ssl/websocket.cnf -extensions v3_req
-```
-
-The file `websocket.crt` is your self-signed certificate. It needs to be marked as **trusted for this account** in your OS.
-
-1. In the case of macOS, open the file `ssl/websocket.pem` in KeyChain. Right click -> Open With -> KeyChain Access (default)
-
-![untrusted new certificate](images/keychain1.png)
-
-2. Double clink on it and expand the **Trust**.
-
-3. Select `Always Trust` for **Secure Sockets Layer (SSL)**. This is the minimal that is needed.
-
-![always trust](images/keychain2.png)
-
-4. Close this windows by pressing the **Close button** on the top left corner (red circle). You will be asked for you credential.
-
-5. The certificate status should be `This certificate is marked as trusted for this account`.
-
-![always trust](images/keychain4.png)
-
-#### IMPORT ROOT CERTIFICATE AUTHORITIES (**FIREFOX ONLY**)
-
-If you use **Firefox**, you might get the error `SEC_ERROR_UNKNOWN_ISSUER`. It can be easily fixed by permitting Firefox to import any root certificate authorities (CAs) that have been added to the operating system.
-
-**DON'T FORGET TO ENFORE THE CHECK** back when you're done.
-
->**Warning**: Changing advanced preferences can affect Firefox's stability and security. This is recommended for **advanced users only**.
-
-1. Open Mozilla Firefox on your computer.
-2. In Firefox window, copy-paste `about:config` in the address bar and hit Enter.
-3. Now, you will receive a message of caution. Click on `Accept the Risk and Continue` to proceed further. Advanced Preferences tab will be opened.
-4. In the Advanced Preferences tab, click on the Search box and type “security.enterprise“.
-5. In the search results, you will notice `security.enterprise_roots.enabled` and the status of it, normally stating `false`.
-6. Click on the arrow sign of the particular option to switch its value to `true`.
-7. Refresh the Websocket page.
-
-![security.enterprise_roots.enabled](images/firefox-SEC_ERROR_UNKNOWN_ISSUER.jpg "Firefox")
-
-Check the how-to on Mozilla's web site: ![Enable Enterprise Roots](https://support.mozilla.org/en-US/kb/how-disable-enterprise-roots-preference/)
+Check [this document](certificate.md).
 
 ### START THE WEBSOCKET SERVER
 

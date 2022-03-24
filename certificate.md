@@ -1,4 +1,4 @@
-﻿# Web Server / WebSocket Server certificate
+﻿# Web Server / WebSocket Server SSL/TLS certificate
 
 ## Introduction
 
@@ -11,7 +11,7 @@ If you cloned this workshop and followed all the steps, you should be in the dir
 You can generate two types of certificate,
 1. a self-signed certificate.
 2. a certificate signed by your private CA.
->For this workshop both will work just fine. Just do one. No need to do both but that won't do any harm.
+>For this workshop both will work just fine. Just do one of the preceding steps, it won't do any harm if you do both.
 
 3. The last step is to **trust** the cetificate you created.
 
@@ -95,9 +95,11 @@ If you're on a macOS, this certificate will look like this, in KeyChain, when it
 
 ## 3. Trust certificate (macOS)
 
-The file `websocket.crt` is your self-signed certificate. It needs to be marked as **trusted for this account** in your OS.
+If you follow step #1, the file `ws-public-cert.pem` is your self-signed certificate. If you followed step #2, the file `websocket.crt` is your self-signed certificate.
 
-1. In the case of macOS, open the file `ssl/websocket.pem` in KeyChain. Right click -> Open With -> KeyChain Access (default)
+It needs to be marked as **trusted for this account** in your OS.
+
+1. In the case of macOS, open the file vertificate file in KeyChain. Right click -> Open With -> KeyChain Access (default)
 
 ![untrusted new certificate](images/keychain1.png)
 
@@ -133,30 +135,4 @@ If you use **Firefox**, you might get the error `SEC_ERROR_UNKNOWN_ISSUER`. It c
 
 Check the how-to on Mozilla's web site: ![Enable Enterprise Roots](https://support.mozilla.org/en-US/kb/how-disable-enterprise-roots-preference/)
 
-
-## Tests (optional)
-
-### check private key
-```command
-openssl rsa -in websocket_rootCA.key -check
-```
-
-#### check whether the certificate is valid, trusted, and complete
-```command
-openssl s_client -connect 127.0.0.1:8766
-```
-
-### Check who has issued the SSL certificate
-```command
-echo | openssl s_client -servername 127.0.0.1 -connect 127.0.0.1:8766 2>/dev/null | openssl x509 -noout -issuer
-```
-
-### Check whom the SSL certificate is issued to
-```command
-echo | openssl s_client -servername 127.0.0.1 -connect 127.0.0.1:8766 2>/dev/null | openssl x509 -noout -subject
-```
-
-### Check for what dates the SSL/TLS certificate is valid
-```command
-echo | openssl s_client -servername 127.0.0.1 -connect 127.0.0.1:10443 2>/dev/null | openssl x509 -noout -dates
-```
+[_^ go back to_](./README.md#START-THE-WEBSOCKET_SERVER)
