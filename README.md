@@ -286,23 +286,6 @@ Round-Trip Time: 2 ms
 disconnected
 ```
 
-## TEST THE CERTIFICATE (OPTINAL)
-
-In case you run into problem with the secure WebSocket, you can use the commands below to check whether the certificate is valid, trusted, and complete.
-Open a `terminal` window.
-
-```command
-openssl s_client -connect 127.0.0.1:9443
-```
-
-You can also use `curl`.
-
->The `-k` allows curl to proceed and operate even for server connections otherwise considered insecure, like self-signed certificate.
-
-```command
-curl -kvI https://127.0.0.1:9443
-```
-
 ## Clean up
 
 When you're done, it's always a good idea to clean everything. If you followed all the steps, you should have two Docker containers running. For the WebSocket servers, just press `CTRL-C` and it should terminate. The only one left is the Web Server. Following is the command to terminate the web server container.
@@ -321,6 +304,30 @@ Check that all of the Docker container you started are terminated.
 
 ```command
 docker ps -a
+```
+
+## wscat
+
+Check [wscat](https://github.com/websockets/wscat). It's a very good WebSocket client.
+
+To use it without installing the module, just `cd $PWD/wscat` and install the dependency locally.
+
+```command
+npm install --save-dev https-proxy-agent
+npm install --save-dev commander
+npm install --save-dev read
+npm install --save-dev readline
+npm install --save-dev tty
+npm install --save-dev ws
+```
+
+To use it against your WebSocket server, type the following. It will try to connect to a WebSocket server
+- with a self-signed certificate
+- set a cookie
+- use basic authentication
+
+```command
+node wscat.js -H Set-Cookie:id=0123456789ABCDEF -n --auth myUsername:mySecretPassword -c wss://localhost:6443/foo
 ```
 
 ## Useful Links
