@@ -139,7 +139,7 @@ docker pull node:current-alpine
 
 If you are planning to use sercure WebSocket `wss://`, you need to get an `SSL/TLS` certificate.
 
-Check [this document] for how to create a **self-signed** certificate.(certificate.md).
+Check [this document](./certificate.md) for how to create a **self-signed** certificate.
 
 ### START THE WEBSOCKET SERVER
 
