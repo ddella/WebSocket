@@ -137,7 +137,7 @@ docker pull node:current-alpine
 
 ### CREATE THE CERTIFICATE FOR SECURE WEBSOCKET `wss://`
 
-Secure WebSocket requires a standard `SSL/TLS` certificate, the same way as `https` do. In this workshop, we'll use a **self-signed** certificate. The tricky part is to have this self-signed certificate being accepted by your browser. This is the tricky part in this workshop. It will depend on the browser and operating system. Troubleshooting self-signed certificate can be hard 😀.
+Secure WebSocket requires a standard `SSL/TLS` certificate, the same way as `https` do. In this workshop, we'll use a **self-signed** certificate. The tricky part is to have this self-signed certificate being accepted by your browser, your client and your operating system.
 
 If you're on a Linux or macOS, use `openssl` to create the certificate. Just type the following commands to generate the self-signed certificate.
 

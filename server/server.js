@@ -27,6 +27,18 @@
  * ssl/websocket.crt => the certificate
  * ssl/websocket.key => the key
  * 
+ *    # create a private Key
+ *    openssl genrsa -out ssl/ws-private-key.pem 4096
+ *    
+ *    # create a CSR (certificate signing request)
+ *    openssl req -new -key ssl/ws-private-key.pem -out ssl/ws-csr.pem -config ssl/websocket.cnf -extensions v3_req
+ *    
+ *    # it's time to pretend that we're a cool signing authority.
+ *    openssl x509 -req -in ssl/ws-csr.pem -signkey ssl/ws-private-key.pem -out ssl/ws-public-cert.pem -days 3650 -sha256 -extfile ssl/websocket.cnf -extensions v3_req
+ * 
+ *    ssl/ws-public-cert.pem => the certificate
+ *    ssl/ws-private-key.pem => the key
+ * 
  */
 
 import * as http from 'http'; //ES 6
@@ -40,6 +52,8 @@ const WSS_PORT = process.env.WSS_PORT ? process.env.WSS_PORT : 6443;
 const options = {
   cert: readFileSync('ssl/websocket.crt'),
   key: readFileSync('ssl/websocket.key')
+  // cert: readFileSync('ssl/ws-public-cert.pem'),
+  // key: readFileSync('ssl/ws-private-key.pem')
 };
 
 const server_https = https.createServer(options);
