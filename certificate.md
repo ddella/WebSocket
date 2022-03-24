@@ -135,4 +135,4 @@ If you use **Firefox**, you might get the error `SEC_ERROR_UNKNOWN_ISSUER`. It c
 
 Check the how-to on Mozilla's web site: ![Enable Enterprise Roots](https://support.mozilla.org/en-US/kb/how-disable-enterprise-roots-preference/)
 
-[_^ go back to_](./README.md#START-THE-WEBSOCKET_SERVER)
+[_^ go back to_](./README.md#START-THE-WEBSOCKET-SERVER)
