@@ -1,10 +1,14 @@
 'use strict';
-// npm install --save-dev https-proxy-agent
-// npm install --save-dev commander
-// npm install --save-dev read
-// npm install --save-dev readline
-// npm install --save-dev tty
-// npm install --save-dev ws
+/**
+ * Install the following modules locally:
+ * 
+ * npm install --save-dev https-proxy-agent
+ * npm install --save-dev commander
+ * npm install --save-dev read
+ * npm install --save-dev readline
+ * npm install --save-dev tty
+ * npm install --save-dev ws
+ */
 
 const EventEmitter = require('events');
 const fs = require('fs');
