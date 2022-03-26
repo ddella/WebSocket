@@ -117,20 +117,27 @@ docker build . -t WebSocket
 
 ## Step 3 - Instantiate a container
 
-The last step is to run the container from the image you just created. I'm not going through all the flags
+The last step is to run the container from the image you just created.
 
 Flags:
 
 -d          Run container in background and print container ID
 -e          Set environment variables
+--ip        Specify the IPv4 address of the running container
+--network   Connect a container to a network
 -p          Publish a container's port(s) to the host
 --rm        Automatically remove the container when it exits
---ip        Specify the IPv4 address of the running container
-
 
 If you want to map different TCP ports, you can pass them as environement variables to the Docker container. **Make sure that what's in the `-e WS_PORT=80` matches what's on the right side of the ':' in the port mapping `-p 9080:80`**. If you don't pass the TCP ports as environement variables, the default will be used.
 >By defaults, the Node JS WebSocket server listen on both TCP port `6080` and `6443`.  
 
+The simplest way to run the container is with the following command:
+
+```Docker
+docker run -d --rm --name wss --hostname wss --domainname example.com --ip 172.31.10.20 -p 9443:443 -p 9080:80 --network frontend WebSocket
+```
+
+Here we show how to use a different port than the ones configured in the Node.js app.
 
 ```Docker
 docker run -d --rm --name wss --hostname wss --domainname example.com --ip 172.31.10.20 -p 9443:443 -p 9080:80 --network frontend -e WS_PORT=80 -e WSS_PORT=443 WebSocket
@@ -144,7 +151,7 @@ docker run -d --rm --name wss --hostname wss --domainname example.com --ip 172.3
 
 ## Troubleshooting
 
-The last step is to run the container from the image you just created. I'm not going through all the flags
+Some commands to check the container.
 
 ```command
 # List container
@@ -153,13 +160,13 @@ docker ps -f name=wss
 # Get only container ID
 docker ps -f name=wss -q
 
-# Print app output
+# Print logs from app
 docker logs $(docker ps -f name=wss -q)
 
-# Enter the container
+# Enter inside the container
 docker exec -it $(docker ps -f name=wss -q) /bin/sh
 
-# Test the container with rtt client, in secure mode
+# Test the container with the rtt client provided, in secure mode
 node client-rtt.js wss://127.0.0.1:9443
 ```
 
