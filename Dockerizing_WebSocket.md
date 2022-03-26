@@ -66,7 +66,7 @@ You'll need to build a Docker image of the app.
 
 Create a file `Dockerfile` with the following:
 
-```docker
+```Dockerfile
 FROM node:current-alpine
 
 # Create app directory
