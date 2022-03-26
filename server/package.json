@@ -1,7 +1,8 @@
 {
-  "name": "npm_start",
+  "name": "server",
   "version": "1.0.0",
-  "description": "",
+  "description": "WebSocket server on Docker",
+  "author": "Daniel Della-Noce <danie@isociel.com>",
   "main": "server.js",
   "type": "module",
   "scripts": {
@@ -10,8 +11,15 @@
     "dev": "nodemon ."
   },
   "keywords": [],
-  "author": "Daniel Della-Noce",
-  "license": "ISC",
+  "license": "MIT",
+  "dependencies": {
+    "bufferutil": "^4.0.6",
+    "http": "^0.0.1-security",
+    "https": "^1.0.0",
+    "url": "^0.11.0",
+    "utf-8-validate": "^5.0.9",
+    "ws": "^8.5.0"
+  },
   "devDependencies": {
     "bufferutil": "^4.0.6",
     "http": "^0.0.1-security",
