@@ -89,11 +89,11 @@ EXPOSE 6080
 # exposed port for wss://
 EXPOSE 6443
 
-# If you are running your code in production
-# CMD [ "node", "server.js" ]
-
 # If you are running your code in dev
-CMD [ "npm", "run", "dev" ]
+# CMD [ "npm", "run", "dev" ]
+
+# If you are running your code in production
+CMD [ "node", "server.js" ]
 ```
 
 ### Create a file named  `.dockerignore`
@@ -139,8 +139,8 @@ docker run -d --rm --name wss --hostname wss --domainname example.com --ip 172.3
 >In the preceeding example, the WebSocket server is started with ports `80` and `443` because `-e` switch was passed to the application. The Docker host maps TCP port `9080` to `80` and `9443` to `443` inside the Docker container, via switch `-p`.  
 
 >In the example above:
->- Docker mapped the port `80` inside of the container to the port `9080` on your machine, aka Docker host.
->- Docker mapped the port `443` inside of the container to the port `9443` on your machine, aka Docker host.
+>- Docker mapped the port `80`, inside of the container, to the port `9080` on your machine, aka Docker host.
+>- Docker mapped the port `443`, inside of the container, to the port `9443` on your machine, aka Docker host.
 
 ## Troubleshooting
 
