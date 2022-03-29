@@ -93,6 +93,7 @@ EXPOSE 6443
 # CMD [ "npm", "run", "dev" ]
 
 # If you are running your code in production
+# CMD [ "npm", "start" ]
 CMD [ "node", "server.js" ]
 ```
 
